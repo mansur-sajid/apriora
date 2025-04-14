@@ -1,0 +1,12 @@
+query Interview($id: GlobalID!) {
+  interviews(filters: { id: $id }) {
+    edges {
+      node {
+        id
+        questions {
+          question
+        }
+      }
+    }
+  }
+}

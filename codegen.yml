@@ -1,0 +1,28 @@
+overwrite: true
+generates:
+  ./src/libs/gql-client/generated/graphql.ts:
+    schema:
+      - https://6242-51-36-232-117.ngrok-free.app:
+          headers:
+            Authorization: 'Basic ${CONCORDE_SERVICE_TOKEN}'
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-query'
+
+    documents:
+      - './src/libs/gql-client/**/*.graphql'
+    config:
+      fetcher: ../graphqlClient#fetcher
+      reactQueryVersion: 5
+      typesPrefix: I
+      pureMagicComment: true
+      dedupeFragments: true
+      exposeQueryKeys: true
+      exposeMutationKeys: true
+      exposeFetcher: true
+      legacyMode: false
+
+hooks:
+  afterOneFileWrite:
+    - prettier --write

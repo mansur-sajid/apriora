@@ -1,0 +1,1 @@
+export const NEXT_PUBLIC_TITAN_URL = process.env.NEXT_PUBLIC_CONCORDE_URL
