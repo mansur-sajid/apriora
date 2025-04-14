@@ -3,7 +3,7 @@ import { GraphQLClient } from 'graphql-request'
 import fetch from 'cross-fetch'
 
 
-const endpoint = `https://6242-51-36-232-117.ngrok-free.app/graphql`
+const endpoint = `http://34.224.67.13:8000/graphql`
 
 export const graphqlClient = new GraphQLClient(endpoint, {
   fetch,
@@ -17,8 +17,11 @@ export function fetcher<TData, TVariables extends object>(
 ) {
   return async (): Promise<TData> =>
     graphqlClient
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
       .request<TData, TVariables>(query, variables, requestHeaders)
       .catch(({ response }) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (Boolean((process as any).browser) && response?.status === 401) {
           return {} as TData
         } else {

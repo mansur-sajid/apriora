@@ -2,7 +2,7 @@ overwrite: true
 generates:
   ./src/libs/gql-client/generated/graphql.ts:
     schema:
-      - https://6242-51-36-232-117.ngrok-free.app:
+      - http://34.224.67.13:8000:
           headers:
             Authorization: 'Basic ${CONCORDE_SERVICE_TOKEN}'
     plugins:
