@@ -8,15 +8,15 @@ const authOptions = {
   },
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: "280462130289-l4715sj9cdo9s1k9ocokcmoik8kh2gm8.apps.googleusercontent.com",
+      clientSecret: "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",
     }),
   ],
   pages: {
     signIn: "/auth/signin",
   },
   debug: true,
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: "n6n3EdXvue3++hXvqTl+gxjy18fDSvtvuGyQuGehpj0=",
 }
 export const GET = NextAuth(authOptions);
 export const POST = NextAuth(authOptions); 
