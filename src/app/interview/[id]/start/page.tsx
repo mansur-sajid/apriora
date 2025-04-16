@@ -142,7 +142,7 @@ export default function InterviewScreen() {
     audioElementRef.current = new Audio();
     audioElementRef.current.onended = handleAudioEnd;
 
-    const ws = new WebSocket(`wss://6242-51-36-232-117.ngrok-free.app/ws/interview/${id}/`);
+    const ws = new WebSocket(`ws://34.224.67.13:8000/ws/interview/${id}/`);
     ws.onopen = () => console.log("✅ WebSocket connected");
 
     ws.onmessage = (event) => {
