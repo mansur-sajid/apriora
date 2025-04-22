@@ -3,7 +3,7 @@ import { GraphQLClient } from 'graphql-request'
 import fetch from 'cross-fetch'
 
 
-const endpoint = `https://ec2-34-224-67-13.compute-1.amazonaws.com/graphql`
+const endpoint = `https://prototype-apriora.duckdns.org/graphql`
 
 export const graphqlClient = new GraphQLClient(endpoint, {
   fetch,
