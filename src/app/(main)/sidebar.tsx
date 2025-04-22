@@ -52,7 +52,7 @@ export default function Sidebar() {
 
       <div className="flex flex-col gap-4 w-full">
         <SidebarIcon href="/" icon={<DashboardIcon />} pathname={pathname} label="Dashboard"/>
-        <SidebarIcon href="/underconstruction" icon={<AssessmentOutlinedIcon />} pathname={pathname} label="Reports" />
+        <SidebarIcon href="/reports" icon={<AssessmentOutlinedIcon />} pathname={pathname} label="Reports" />
         <SidebarIcon href="/calendar" icon={<CalendarTodayIcon />} pathname={pathname} label="Calendar" />
       </div>
     </div>
