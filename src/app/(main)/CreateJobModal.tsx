@@ -125,7 +125,10 @@ const MultiStepFormModal = ({
 
     if (valid) setStep((s) => s + 1);
   };
+  
+  
   const { fields, append, remove } = useFieldArray({
+    // @ts-expect-error – we know this is okay for now
     name: "questions",
     control: methods.control,
   });

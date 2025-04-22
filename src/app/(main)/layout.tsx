@@ -1,13 +1,7 @@
-import { Archivo } from 'next/font/google';
 import ClientWrapper from '../../components/ClientWrapper';
 import SidebarWrapper from './SideBarWrapper';
 import Toolbox from './toolbox';
 
-const archivo = Archivo({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-archivo',
-});
 
 export const metadata = {
   title: 'Create Next App',
@@ -21,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={archivo.variable}>
+    <html lang="en">
       <body className="textfont">
         <ClientWrapper>
           <div style={{ display: 'flex', height: '100vh' }}>

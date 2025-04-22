@@ -32,7 +32,7 @@ export default function InterviewPage() {
   const faceCheckInterval = useRef<NodeJS.Timeout | null>(null);
   const lookAwayStartTime = useRef<number | null>(null);
   const warningGiven = useRef(false);
-  const { data } = useInterviewQuery({ id: toGlobalId("Interview", id) });
+  const { data } = useInterviewQuery({ id: toGlobalId("Interview", String(id)) });
   const router = useRouter();
   const interview = data?.interviews.edges[0]?.node;
   console.log("Interview data:", interview);

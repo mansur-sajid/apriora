@@ -81,7 +81,7 @@ export const ChatTranscript = ({ messages, loading, isRecording, company, positi
 
           <div className="space-y-3" ref={containerRef}>
             <AnimatePresence>
-              {messages.map((msg, index) => (
+              {messages?.map((msg, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
@@ -176,7 +176,7 @@ export const ChatTranscript = ({ messages, loading, isRecording, company, positi
             Participants
           </Typography>
           <div className="space-y-5 mt-4">
-            {participants.map((participant, index) => (
+            {participants?.map((participant, index) => (
               <div key={index} className="flex items-center gap-3 px-4">
                 <Avatar src={participant.image} alt={participant.name} />
                 <div>

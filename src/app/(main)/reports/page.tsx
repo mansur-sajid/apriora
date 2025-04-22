@@ -28,8 +28,6 @@ const InterviewSummaryPage = () => {
   };
 
   const handleClose = () => setOpen(false);
-  console.log("summaries", summaries);
-  console.log(selected?.summary?.summary, "selected.summary.summary");
 
   return (
     <Box p={4}>
@@ -53,7 +51,7 @@ const InterviewSummaryPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {summaries.summary.map((row, index) => (
+              {summaries?.summary.map((row, index) => (
                 <TableRow key={index}>
                   <TableCell>{`${row.user.firstName} ${row.user.lastName}`}</TableCell>
                   <TableCell>{row.jobPost.title}</TableCell>

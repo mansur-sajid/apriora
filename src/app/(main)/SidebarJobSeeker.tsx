@@ -49,7 +49,7 @@ export default function Sidebar() {
       <img src="/logo.png" alt="Logo" className="custom-sidenav-logo mb-10 w-14 h-14" />
 
       <div className="flex flex-col gap-4 w-full">
-        <SidebarIcon href="/" icon={<DashboardIcon />} pathname={pathname} label="Dashboard"  className="pl-9"/>
+        <SidebarIcon href="/" icon={<DashboardIcon />} pathname={pathname} label="Dashboard"/>
         <SidebarIcon href="/jobs" icon={<BusinessIcon />} pathname={pathname} label="Jobs" />
         <SidebarIcon href="/calendar" icon={<CalendarTodayIcon />} pathname={pathname} label="Calendar" />
       </div>

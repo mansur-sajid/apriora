@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
 import { format } from "date-fns";
