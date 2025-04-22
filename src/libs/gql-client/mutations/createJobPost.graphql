@@ -1,0 +1,7 @@
+mutation CreateJobPost($data: JobPostCreateInput!) {
+  jobPostCreate(
+    data: $data
+  ) {
+    id
+  }
+}

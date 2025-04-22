@@ -1,0 +1,35 @@
+query UpcomingInterview {
+  upcomingInterview {
+    id
+    scheduledAt
+    jobPostApplication {
+        jobPost {
+          applicationLimit
+    availibility
+    city
+    company {
+      name
+    }
+    country
+    createdAt
+    deletedAt
+    department
+    description
+    employmentType
+    endDate
+    expiresAt
+    firstPublishedAt
+    id
+    payType
+    startDate
+    salary
+    status
+    title
+    totalApplications
+    updatedAt
+    workMode
+    workStartDate
+        }
+    }
+  }
+}

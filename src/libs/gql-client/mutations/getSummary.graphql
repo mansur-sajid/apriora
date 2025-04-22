@@ -1,0 +1,12 @@
+mutation getInterviewSumary ($interviewId: UUID!) {
+  getSummary(interviewId: $interviewId) {
+    summary
+    communication
+    cultureFit
+    curiosity
+    experience
+    overallScore
+    problemSolving
+    technicalAbility
+  }
+}

@@ -1,12 +1,19 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams , useRouter} from "next/navigation";
 import { AssemblyAI } from "assemblyai";
 import * as faceapi from "face-api.js";
 import toast from "react-hot-toast";
+import { InterviewHeader } from "../../../../(main)/talk/components/Header";
+import { VideoFeed } from "../../../../(main)/talk/components/VideoFeed";
+import { ChatTranscript } from "../../../../(main)/talk/components/Transcript";
+import { Box } from "@mui/material";
+import { IconButton } from "@mui/material";
+import SpaceBarIcon from '@mui/icons-material/SpaceBar';
+import { useInterviewQuery, toGlobalId } from "@apriora/titan/gql-client";
 
-export default function InterviewScreen() {
+export default function InterviewPage() {
   const { id } = useParams();
   const [messages, setMessages] = useState<{ type: string; text: string; audio?: string }[]>([]);
   const [loading, setLoading] = useState(false);
@@ -25,6 +32,10 @@ export default function InterviewScreen() {
   const faceCheckInterval = useRef<NodeJS.Timeout | null>(null);
   const lookAwayStartTime = useRef<number | null>(null);
   const warningGiven = useRef(false);
+  const { data } = useInterviewQuery({ id: toGlobalId("Interview", id) });
+  const router = useRouter();
+  const interview = data?.interviews.edges[0]?.node;
+  console.log("Interview data:", interview);
 
   const client = new AssemblyAI({ apiKey: "43b24f3a62744557bfdc6813f3211783" });
 
@@ -32,8 +43,8 @@ export default function InterviewScreen() {
   useEffect(() => {
     const loadModels = async () => {
       try {
-        await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
-        await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
+         faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+         faceapi.nets.faceLandmark68Net.loadFromUri('/models');
         startVideo();
       } catch (error) {
         console.error("Error loading face detection models:", error);
@@ -48,8 +59,6 @@ export default function InterviewScreen() {
         streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          videoRef.current.width = 640;
-          videoRef.current.height = 480;
           videoRef.current.onloadedmetadata = () => {
             videoRef.current?.play();
           };
@@ -75,19 +84,11 @@ export default function InterviewScreen() {
         ).withFaceLandmarks();
 
         if (detections.length > 0) {
-          const canvas = faceapi.createCanvasFromMedia(videoRef.current);
-          const displaySize = { 
-            width: videoRef.current.videoWidth,
-            height: videoRef.current.videoHeight
-          };
-          faceapi.matchDimensions(canvas, displaySize);
-
-          const resizedDetections = faceapi.resizeResults(detections, displaySize);
-          const landmarks = resizedDetections[0].landmarks;
+          const landmarks = detections[0].landmarks;
           const nose = landmarks.getNose();
           const nosePosition = nose[3];
 
-          checkAttention(nosePosition.x, displaySize.width);
+          checkAttention(nosePosition.x, videoRef.current.videoWidth);
         } else {
           handleLookAway();
         }
@@ -111,7 +112,7 @@ export default function InterviewScreen() {
         if (warningGiven.current || isAway) {
           warningGiven.current = false;
           setIsAway(false);
-          toast.dismiss(); // Dismiss any active warning toasts
+          toast.dismiss();
         }
       }
     };
@@ -142,7 +143,7 @@ export default function InterviewScreen() {
     audioElementRef.current = new Audio();
     audioElementRef.current.onended = handleAudioEnd;
 
-    const ws = new WebSocket(`wss://prototype-apriora.duckdns.org/ws/interview/${id}/`);
+    const ws = new WebSocket(`ws://localhost:8000/ws/interview/${id}/`);
     ws.onopen = () => console.log("✅ WebSocket connected");
 
     ws.onmessage = (event) => {
@@ -161,6 +162,25 @@ export default function InterviewScreen() {
         });
         if (data.message_type === 'question') {
           currentAudioTypeRef.current = data.message_type;
+        }
+        if (data.message_type === 'interview_complete') {
+          const checkAndRedirect = () => {
+            if (!isPlayingRef.current && audioQueueRef.current.length === 0) {
+              cleanup();
+              router.push(`/interview/${id}/completed`);
+            }
+          };
+        
+          // Poll the queue after each second until it's done
+          const interval = setInterval(() => {
+            if (!isPlayingRef.current && audioQueueRef.current.length === 0) {
+              clearInterval(interval);
+              checkAndRedirect();
+            }
+          }, 500);
+        
+          // Also check immediately in case everything is already done
+          checkAndRedirect();
         }
         if (!isPlayingRef.current) {
           playNextAudio();
@@ -215,15 +235,6 @@ export default function InterviewScreen() {
     setIsAway(false);
     toast.dismiss();
   };
-
-  useEffect(() => {
-    // This will ensure the warning message updates when isAway changes
-    return () => {
-      if (!isAway) {
-        toast.dismiss();
-      }
-    };
-  }, [isAway]);
 
   const playNextAudio = () => {
     if (audioQueueRef.current.length === 0 || isPlayingRef.current) return;
@@ -316,59 +327,45 @@ export default function InterviewScreen() {
     }
   };
 
+  const handleSpaceButtonClick = () => {
+    if (isRecording) {
+      stopRecording();
+    }
+  };
+
   return (
-    <div className="max-w-2xl mx-auto p-6 relative">
-      <h1 className="text-2xl font-bold mb-4">Live Interview</h1>
-
-      <div className="space-y-4">
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex ${msg.type === "user" ? "justify-end" : "justify-start"}`}
+    <Box className="w-screen p-6 flex gap-5 h-screen" style={{ backgroundColor: "#101a25" }}>
+      <Box className="w-3/4">
+        <InterviewHeader position={interview?.jobPostApplication.jobPost.title}/>
+        
+        <div className="mt-1">
+          <VideoFeed videoRef={videoRef} isAway={isAway} />
+        </div>
+        
+        <div className="flex justify-center mt-3">
+          <IconButton
+            onClick={handleSpaceButtonClick}
+            sx={{
+              backgroundColor: isRecording ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.2)',
+              '&:hover': {
+                backgroundColor: isRecording ? 'rgba(255, 0, 0, 0.4)' : 'rgba(255, 255, 255, 0.4)',
+              },
+              borderRadius: '10px',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+              width: '200px',
+            }}
           >
-            <div
-              className={`p-3 rounded-lg max-w-xs md:max-w-md ${
-                msg.type === "user"
-                  ? "bg-blue-100 text-blue-900"
-                  : "bg-gray-100 text-gray-900"
-              }`}
-            >
-              <p>{msg.text}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-        <p className="text-gray-600 mb-2">
-          {isRecording ? (
-            <>
-              <span className="inline-block w-3 h-3 bg-red-500 rounded-full mr-2 animate-pulse"></span>
-              Recording... Speak now (auto-stops after silence)
-            </>
-          ) : loading ? (
-            "Processing your response..."
-          ) : (
-            "Waiting for question..."
-          )}
-        </p>
-        {isAway && (
-          <div className="mt-2 p-2 bg-yellow-100 text-yellow-800 rounded">
-            Warning: Please focus on the interview
-          </div>
-        )}
-      </div>
-
-      <div className="fixed bottom-4 right-4 w-40 h-28 border border-gray-300 shadow-lg rounded overflow-hidden bg-black">
-        <video 
-          ref={videoRef} 
-          className="w-full h-full object-cover" 
-          muted 
-          playsInline 
-          width="160"
-          height="120"
-        />
-      </div>
-    </div>
+            <SpaceBarIcon className="text-white"/>
+            {isRecording && (
+              <span className="ml-2 text-white text-xs">Stop Recording</span>
+            )}
+          </IconButton>
+        </div>
+      </Box>
+      
+      <Box className="w-1/4">
+        <ChatTranscript messages={messages} loading={loading} isRecording={isRecording} position={interview?.jobPostApplication.jobPost.title} company={interview?.jobPostApplication.jobPost.company.name}/>
+      </Box>
+    </Box>
   );
 }

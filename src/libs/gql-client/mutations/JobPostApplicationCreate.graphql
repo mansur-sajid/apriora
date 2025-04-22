@@ -1,0 +1,11 @@
+mutation CreateJobPostApplication($data: JobPostApplicationCreateInput!) {
+  createJobPostApplication(data: $data) {
+    ... on JobPostApplicationType {
+      id
+    }
+    ... on GraphQLErrorType {
+      message
+      code
+    }
+  }
+}

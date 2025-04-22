@@ -1,0 +1,18 @@
+query getAllSummaries {
+  summary {
+    summary {
+      summary
+    }
+    jobPost {
+      title
+    }
+    user {
+      email
+      lastName
+      firstName
+    }
+    interview {
+      scheduledAt
+    }
+  }
+}

@@ -6,6 +6,17 @@ query Interview($id: GlobalID!) {
         questions {
           question
         }
+        user {
+      name
+    }
+    jobPostApplication {
+      jobPost {
+        company {
+          name
+        }
+        title
+      }
+    }
       }
     }
   }
