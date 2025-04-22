@@ -1,0 +1,16 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/manifest.webmanifest/route": "/manifest.webmanifest",
+  "/(interview)/interview/[id]/completed/page": "/interview/[id]/completed",
+  "/(interview)/interview/[id]/page": "/interview/[id]",
+  "/(interview)/interview/[id]/start/page": "/interview/[id]/start",
+  "/(main)/auth/signin/page": "/auth/signin",
+  "/(main)/calendar/page": "/calendar",
+  "/(main)/dashboard-jobseeker/page": "/dashboard-jobseeker",
+  "/(main)/jobs/page": "/jobs",
+  "/(main)/login/page": "/login",
+  "/(main)/page": "/",
+  "/(main)/reports/page": "/reports",
+  "/(main)/talk/page": "/talk",
+  "/(main)/underconstruction/page": "/underconstruction"
+}
