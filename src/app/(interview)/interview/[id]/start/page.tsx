@@ -143,7 +143,7 @@ export default function InterviewPage() {
     audioElementRef.current = new Audio();
     audioElementRef.current.onended = handleAudioEnd;
 
-    const ws = new WebSocket(`ws://localhost:8000/ws/interview/${id}/`);
+    const ws = new WebSocket(`wss://prototype-apriora.duckdns.org/ws/interview/${id}/`);
     ws.onopen = () => console.log("✅ WebSocket connected");
 
     ws.onmessage = (event) => {

@@ -2,7 +2,7 @@ overwrite: true
 generates:
   ./src/libs/gql-client/generated/graphql.ts:
     schema:
-      - http://localhost:8000/graphql:
+      - https://ec2-34-224-67-13.compute-1.amazonaws.com/graphql:
           headers:
             Authorization: 'Basic ${CONCORDE_SERVICE_TOKEN}'
     plugins:

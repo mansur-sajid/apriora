@@ -102,6 +102,30 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/login": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/login",
+      "dataRoute": "/login.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/jobs": {
       "experimentalBypassFor": [
         {
@@ -150,7 +174,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/login": {
+    "/reports": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -163,8 +187,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/login",
-      "dataRoute": "/login.rsc",
+      "srcRoute": "/reports",
+      "dataRoute": "/reports.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -221,37 +245,13 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
-    },
-    "/reports": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/reports",
-      "dataRoute": "/reports.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "1bed04657eaac31a9254ad52c2f9686c",
-    "previewModeSigningKey": "46d13c0b8cb34063318acfabacc32d785d33f96a5537689b75dcd2adbb02faeb",
-    "previewModeEncryptionKey": "52625be8cacf6f4fa10f5c8d66addc08331a476d3eae864e86b259be3e2dd2ef"
+    "previewModeId": "5570ca18396d1835b8623a8bab6b1498",
+    "previewModeSigningKey": "d41c8bd5272970d7519db9e17aee8f9d5f5c233c465b248c6d8bfef33084359e",
+    "previewModeEncryptionKey": "74014da2c08496b8d8d7f5796231e4bd5b35985fa87168d03ae7316d8ac5689e"
   }
 }
