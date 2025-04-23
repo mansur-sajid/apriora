@@ -97,7 +97,7 @@ const MultiStepFormModal = ({
       applicationLimit: 0,
       workStartDate: "",
       expiresAt: null,
-      questions: [""],
+      questions: [],
     },
   });
 
@@ -135,9 +135,39 @@ const MultiStepFormModal = ({
 
   const previousStep = () => setStep((s) => s - 1);
 
-  const onSubmit = (data: FullForm) => {
-    console.log("Submitted:", data);
-    onClose(); // close after submit
+  const onSubmit = async (data: FullForm) => {
+    try {
+      console.log("Submitted:", data);
+      
+      await createJobPost({
+        data: {
+          title: data.title,
+          payType: IJobPostPayTypeEnum.Unit,
+          department: data.department,
+          description: data.description,
+          city: data.city,
+          companyId: toGlobalId("CompanyType", "42fe9ce9-ccf9-4197-8ea2-aff660ab3968"), // Replace with actual company ID
+          availibility: data.availability,
+          workMode: data.workMode,
+          employmentType: data.employmentType,
+          applicationLimit: parseInt(data.applicationLimit.toString(), 10),
+          workStartDate: data.workStartDate,
+          startDate: data.workStartDate,
+          expiresAt: data.expiresAt,
+          questions: data.questions, // This will now have the proper values
+          endDate: data.expiresAt,
+          country: "",
+          salary: parseInt(data.salary.toString(), 10),
+          status: IJobPostStatusEnum.Draft,
+        },
+      });
+      
+      methods.reset();
+      setStep(0);
+      onClose();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
 
   return (
@@ -346,35 +376,7 @@ const MultiStepFormModal = ({
       Next
     </Button>
   ) : (
-    <Button variant="contained" onClick={()=> {
-
-      handleSubmit(onSubmit)();
-      createJobPost({
-        data: {
-          title: methods.getValues("title"),
-          payType: IJobPostPayTypeEnum.Unit,
-          department: methods.getValues("department"),
-          description: methods.getValues("description"),
-          city: methods.getValues("city"),
-          companyId: toGlobalId("CompanyType", "42fe9ce9-ccf9-4197-8ea2-aff660ab3968"), // Replace with actual company ID
-          availibility: methods.getValues("availability"),
-          workMode: methods.getValues("workMode"),
-          employmentType: methods.getValues("employmentType"),
-          applicationLimit: parseInt(methods.getValues("applicationLimit").toString(), 10),
-          workStartDate: methods.getValues("workStartDate"),
-          startDate: methods.getValues("workStartDate"),
-          expiresAt: methods.getValues("expiresAt"),
-          questions: methods.getValues("questions"),
-          endDate: methods.getValues("expiresAt"),
-          country: "",
-          salary: parseInt(methods.getValues("salary").toString(), 10),
-          status: IJobPostStatusEnum.Draft,
-        },
-      });
-      methods.reset(); // Reset form to default values
-      setStep(0);
-      onClose();       // Close the modal
-    }}>
+    <Button variant="contained" onClick={handleSubmit(onSubmit)}>
       Submit
     </Button>
   )}

@@ -10,7 +10,7 @@
   "/(main)/jobs/page": "/jobs",
   "/(main)/login/page": "/login",
   "/(main)/page": "/",
-  "/(main)/talk/page": "/talk",
   "/(main)/reports/page": "/reports",
+  "/(main)/talk/page": "/talk",
   "/(main)/underconstruction/page": "/underconstruction"
 }

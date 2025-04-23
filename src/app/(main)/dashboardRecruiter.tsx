@@ -24,7 +24,7 @@ export default function Home() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const itemsPerPage = 5;
-  const totalPages = 2;
+  
 
   const jobsposted = "+23";
   const TotalApplicants = "+45";
@@ -68,6 +68,7 @@ export default function Home() {
   };
 
   const { data: jobsPosts, isLoading } = useJobsPostsQuery();
+  const totalPages = isLoading ? 0 : Math.ceil(jobsPosts?.jobPosts.length / itemsPerPage);
 
   return (
     <div className="tab-dashboard">
