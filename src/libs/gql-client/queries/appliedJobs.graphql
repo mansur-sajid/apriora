@@ -1,29 +1,34 @@
 query AppliedJobs {
   appliedJobPosts {
-    applicationLimit
-    availibility
-    city
-    company {
-      name
+    jobPost {
+      availibility
+      applicationLimit
+      city
+      country
+      company {
+        name
+      }
+      workStartDate
+      workMode
+      updatedAt
+      totalApplications
+      title
+      status
+      startDate
+      salary
+      payType
+      id
+      firstPublishedAt
+      expiresAt
+      endDate
+      employmentType
+      description
+      department
+      deletedAt
+      createdAt
     }
-    country
-    createdAt
-    deletedAt
-    department
-    description
-    employmentType
-    endDate
-    expiresAt
-    firstPublishedAt
-    id
-    payType
-    startDate
-    salary
-    status
-    title
-    totalApplications
-    updatedAt
-    workMode
-    workStartDate
+    interview {
+      scheduledAt
+    }
   }
 }

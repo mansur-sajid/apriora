@@ -227,31 +227,36 @@ to {
     `,E=(t,e)=>(0,o.I)({queryKey:["Interview",t],queryFn:l(_,t),...e});E.getKey=t=>["Interview",t],E.fetcher=(t,e)=>l(_,t,e);let C=`
     query AppliedJobs {
   appliedJobPosts {
-    applicationLimit
-    availibility
-    city
-    company {
-      name
+    jobPost {
+      availibility
+      applicationLimit
+      city
+      country
+      company {
+        name
+      }
+      workStartDate
+      workMode
+      updatedAt
+      totalApplications
+      title
+      status
+      startDate
+      salary
+      payType
+      id
+      firstPublishedAt
+      expiresAt
+      endDate
+      employmentType
+      description
+      department
+      deletedAt
+      createdAt
     }
-    country
-    createdAt
-    deletedAt
-    department
-    description
-    employmentType
-    endDate
-    expiresAt
-    firstPublishedAt
-    id
-    payType
-    startDate
-    salary
-    status
-    title
-    totalApplications
-    updatedAt
-    workMode
-    workStartDate
+    interview {
+      scheduledAt
+    }
   }
 }
     `,S=(t,e)=>(0,o.I)({queryKey:void 0===t?["AppliedJobs"]:["AppliedJobs",t],queryFn:l(C,t),...e});S.getKey=t=>void 0===t?["AppliedJobs"]:["AppliedJobs",t],S.fetcher=(t,e)=>l(C,t,e);let k=`

@@ -22,6 +22,10 @@ export default function JobTable({
   function formatDate(datetime: string): string {
     return format(parseISO(datetime), "MMMM d, yyyy");
   }
+  function formatDateTime(datetime: string): string {
+    return format(parseISO(datetime), "MMMM d, yyyy 'at' h:mm a");
+    // Example output: April 21, 2025 at 9:30 AM
+  }
 
   console.log("appliedJobs", appliedJobs);
   const workModeLabels: Record<string, string> = {
@@ -84,7 +88,10 @@ export default function JobTable({
   const handleApply = () => {
     console.log("Applied for:", selectedJob);
     console.log("Details:", applicationDetails);
-    const interviewDateTime = `${applicationDetails.date}T${applicationDetails.time}:00.000Z`;
+    const localDateTime = new Date(`${applicationDetails.date}T${applicationDetails.time}`);
+    
+    // Convert to ISO string (automatically converts to UTC)
+    const interviewDateTime = localDateTime.toISOString();
 
     try {
       createJobPostApplication({
@@ -139,30 +146,51 @@ export default function JobTable({
                 Availability
               </th>
               <th className="px-4 py-3 font-medium text-[#7e5ca0]">Location</th>
-              <th className="px-4 py-3 font-medium text-[#7e5ca0] whitespace-nowrap">
+              {
+                applied ? (<>
+                  <th className="px-4 py-3 font-medium text-[#7e5ca0] whitespace-nowrap">
+                Interview Scheduled At
+              </th>
+              </>) : (<>
+                <th className="px-4 py-3 font-medium text-[#7e5ca0] whitespace-nowrap">
                 Posted At
               </th>
               <th className="px-4 py-3 font-medium text-[#7e5ca0] whitespace-nowrap">
                 Expires At
-              </th>
+              </th></>)
+              }
               <th className="px-4 py-3 font-medium text-[#7e5ca0]"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-300">
             {paginatedJobs.map((job, index) => (
               <tr key={index} className="hover:bg-white/40 transition">
-                <td className="px-4 py-3">${job.salary}K</td>
-                <td className="px-4 py-3">{job.title}</td>
-                <td className="px-4 py-3">{job.department}</td>
+                <td className="px-4 py-3">${applied ? job.jobPost.salary : job.salary}K</td>
+                <td className="px-4 py-3">{applied ? job.jobPost.title : job.title}</td>
+                <td className="px-4 py-3">{applied ? job.jobPost.department: job.department}</td>
                 <td className="px-4 py-3">
-                  {availabilityLabels[job.availibility] || job.availibility}
+                  {availabilityLabels[ applied ?  job.jobPost.availibility : job.availibility]}
                 </td>
                 <td className="px-4 py-3">
-                  {`${workModeLabels[job.workMode] || job.workMode} - ${job.city}`}
+                  {`${workModeLabels[ applied ? job.jobPost.workMode : job.workMode ]} - ${ applied ? job.jobPost.city : job.city }`}
                 </td>
 
-                <td className="px-4 py-3">{formatDate(job.createdAt)}</td>
-                <td className="px-4 py-3">{formatDate(job.expiresAt)}</td>
+                {applied ? (
+                  <td className="px-4 py-3">
+                    {job.interview
+                      ? formatDateTime(job.interview.scheduledAt)
+                      : "Not Scheduled"}
+                  </td>
+                ) : (
+                  <>
+                    <td className="px-4 py-3">
+                      {formatDate(applied ? job.jobPost.createdAt : job.createdAt)}
+                    </td>
+                    <td className="px-4 py-3">
+                      {formatDate( applied ? job.jobPost.expiresAt : job.expiresAt)}
+                    </td>
+                  </>
+                )}
                 <td className="px-4 py-3">
                   <div className="flex gap-5">
                     <div
@@ -215,7 +243,7 @@ export default function JobTable({
       <DetailsPanel
         open={isDetailsOpen}
         onClose={() => setIsDetailsOpen(false)}
-        job={selectedJob}
+        job={applied ? selectedJob?.jobPost : selectedJob}
       />
 
       <ApplyModal
