@@ -141,8 +141,15 @@ export default function Home() {
               {/* Job stats box */}
               <KPI
                 title="FollowUps"
-                value={Followups}
-                percentage="16"
+                value={kpis?.jobSeekerKpis?.followUps}
+                percentage={kpis?.jobSeekerKpis?.followUpsChangePercent}
+                direction={
+                  kpis?.jobSeekerKpis?.followUpsChangePercent > 0
+                    ? 'up'
+                    : kpis?.jobSeekerKpis?.followUpsChangePercent < 0
+                    ? 'down'
+                    : 'neutral'
+                }
                 comparison="vs last week"
                 icon={
                   <svg

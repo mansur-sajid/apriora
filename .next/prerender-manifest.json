@@ -78,30 +78,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/dashboard-jobseeker": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/dashboard-jobseeker",
-      "dataRoute": "/dashboard-jobseeker.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/jobs": {
       "experimentalBypassFor": [
         {
@@ -150,6 +126,30 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/dashboard-jobseeker": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/dashboard-jobseeker",
+      "dataRoute": "/dashboard-jobseeker.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -174,30 +174,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/reports": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/reports",
-      "dataRoute": "/reports.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/underconstruction": {
       "experimentalBypassFor": [
         {
@@ -213,6 +189,30 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/underconstruction",
       "dataRoute": "/underconstruction.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/reports": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/reports",
+      "dataRoute": "/reports.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -250,8 +250,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "824bd284e23b5244a16a00158db7ea8a",
-    "previewModeSigningKey": "4787378c29965a7814ba4c0c9188c2e854a5a6cc6418117de6e2380ad14627c5",
-    "previewModeEncryptionKey": "a37c143d1750ee09e4ed43e359fd4a205c0f4d45b073a2de13c5cf4e5d02f854"
+    "previewModeId": "4136736fcc4b93e21dd33cb850d1b9df",
+    "previewModeSigningKey": "8e0894b355f20935814860c9e3a013359330992f5e1e38485eeb852f2e044425",
+    "previewModeEncryptionKey": "2b492b37bb2dadd2d55ebaff5dfe4cec96938122f0137023c38e8b0dbaa93464"
   }
 }
