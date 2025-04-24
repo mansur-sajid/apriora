@@ -5,7 +5,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const RoleContext = createContext();
 
 export function RoleProvider({ children }) {
-  const [role, setRole] = useState('recruiter');
+  const [role, setRole] = useState('');
 
   useEffect(() => {
     const storedRole = localStorage.getItem('role');

@@ -8,7 +8,7 @@ import Filters from "../jobs/filters";
 import KPI from "../kpi";
 import Jobs from "../jobstable";
 import InterviewCard from "../interviewcard";
-import { useAppliedJobsQuery } from "@apriora/titan/gql-client";
+import { useAppliedJobsQuery, useJobSeekerKpisQuery } from "@apriora/titan/gql-client";
 
 export default function Home() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -41,7 +41,8 @@ export default function Home() {
     );
     setCurrentDate(next);
   };
-  const { data: appliedJobs } = useAppliedJobsQuery();
+  const { data: appliedJobs, isLoading: isl1 } = useAppliedJobsQuery();
+  const { data: kpis, isLoading: isl2 } = useJobSeekerKpisQuery();
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -49,8 +50,8 @@ export default function Home() {
   const startDay = getStartDay(year, month);
   const jobsapplied = "+93";
   const interviewsattended = "+10";
-  const Followups = "+31";
-  const Pending = "+9";
+  const Followups = "31";
+  const Pending = "9";
 
   const totalCells = 42;
   const daysArray = Array.from({ length: totalCells }, (_, i) => {
@@ -73,8 +74,16 @@ export default function Home() {
               {/* Job stats box */}
               <KPI
                 title="Jobs Applied"
-                value={jobsapplied}
-                percentage="26%"
+                value={kpis?.jobSeekerKpis?.jobsApplied}
+                percentage={kpis?.jobSeekerKpis?.jobsAppliedChangePercent}
+                direction={
+                  kpis?.jobSeekerKpis?.jobsAppliedChangePercent > 0
+                    ? 'up'
+                    : kpis?.jobSeekerKpis?.jobsAppliedChangePercent < 0
+                    ? 'down'
+                    : 'neutral'
+                }
+                
                 comparison="vs last week"
                 icon={
                   <svg
@@ -93,13 +102,21 @@ export default function Home() {
                   </svg>
                 }
                 bgClass="blueshade"
-                direction="down"
+                
               />
               {/* Job stats box */}
               <KPI
                 title="Interviews Attended"
-                value={interviewsattended}
-                percentage="46%"
+                value={kpis?.jobSeekerKpis?.interviewsAttended}
+                percentage={kpis?.jobSeekerKpis?.interviewsAttendedChangePercent}
+                direction={
+                  kpis?.jobSeekerKpis?.interviewsAttendedChangePercent > 0
+                    ? 'up'
+                    : kpis?.jobSeekerKpis?.interviewsAttendedChangePercent < 0
+                    ? 'down'
+                    : 'neutral'
+                }
+                
                 comparison="vs last week"
                 icon={
                   <svg
@@ -125,7 +142,7 @@ export default function Home() {
               <KPI
                 title="FollowUps"
                 value={Followups}
-                percentage="16%"
+                percentage="16"
                 comparison="vs last week"
                 icon={
                   <svg
@@ -147,8 +164,16 @@ export default function Home() {
               />
               <KPI
                 title="Pending Interviews"
-                value={Pending}
-                percentage="66%"
+                value={kpis?.jobSeekerKpis?.pendingInterviews}
+                percentage={kpis?.jobSeekerKpis?.pendingInterviewsChangePercent}
+                direction={
+                  kpis?.jobSeekerKpis?.pendingInterviewsChangePercent > 0
+                    ? 'up'
+                    : kpis?.jobSeekerKpis?.pendingInterviewsChangePercent < 0
+                    ? 'down'
+                    : 'neutral'
+                }
+                
                 comparison="vs last week"
                 icon={
                   <svg

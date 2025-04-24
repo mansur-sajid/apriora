@@ -8,7 +8,15 @@ import DashboardJobSeeker from './dashboard-jobseeker/page';
 export default function Home() {
   const { role } = useRole();
 
-  return (
-    role === 'recruiter' ? <DashboardRecruiter /> : <DashboardJobSeeker />
-  );
+  if (role === "recruiter") {
+    return (
+        <DashboardRecruiter />
+    );
+  }
+  else if (role === "jobseeker") {
+    return (
+        <DashboardJobSeeker />
+    );
+  }
+    
 }

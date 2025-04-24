@@ -6,7 +6,7 @@ import Filters from "./Filters";
 import CreateJobModal from "./CreateJobModal";
 import { useJobsPostsQuery } from "@/libs/gql-client";
 import { format, parseISO } from "date-fns";
-import { useCreateJobPostMutation } from "@/libs/gql-client";
+import { useCreateJobPostMutation, useRecruiterKpisQuery } from "@/libs/gql-client";
 import {
   Menu,
   MenuItem,
@@ -24,11 +24,7 @@ export default function Home() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const itemsPerPage = 5;
-  
 
-  const jobsposted = "+23";
-  const TotalApplicants = "+45";
-  const Interviewedno = "+7";
 
   function formatDate(datetime: string): string {
     return format(parseISO(datetime), "MMMM d, yyyy");
@@ -68,6 +64,8 @@ export default function Home() {
   };
 
   const { data: jobsPosts, isLoading } = useJobsPostsQuery();
+  const { data: kpis } = useRecruiterKpisQuery();
+
   const totalPages = isLoading ? 0 : Math.ceil(jobsPosts?.jobPosts.length / itemsPerPage);
 
   return (
@@ -78,8 +76,15 @@ export default function Home() {
           {/* Job stats box */}
           <KPI
             title="Jobs Posted"
-            value={jobsposted}
-            percentage="24%"
+            value={kpis?.recruiterKpis?.jobsPosted}
+            percentage={kpis?.recruiterKpis?.jobsPostedChangePercent}
+            direction={
+              kpis?.recruiterKpis?.interviewedChangePercent > 0
+                ? 'up'
+                : kpis?.recruiterKpis?.interviewedChangePercent < 0
+                ? 'down'
+                : 'neutral'
+            }
             comparison="vs last week"
             icon={
               <svg
@@ -102,8 +107,15 @@ export default function Home() {
           />
           <KPI
             title="Total Applicants"
-            value={TotalApplicants}
-            percentage="14%"
+            value={kpis?.recruiterKpis?.totalApplicants}
+            percentage={kpis?.recruiterKpis?.totalApplicantsChangePercent}
+            direction={
+              kpis?.recruiterKpis?.totalApplicantsChangePercent > 0
+                ? 'up'
+                : kpis?.recruiterKpis?.totalApplicantsChangePercent < 0
+                ? 'down'
+                : 'neutral'
+            }
             comparison="vs last week"
             icon={
               <svg
@@ -125,12 +137,19 @@ export default function Home() {
               </svg>
             }
             bgClass="blueshade"
-            direction="down"
+            
           />
           <KPI
             title="Interviewed"
-            value={Interviewedno}
-            percentage="26%"
+            value={kpis?.recruiterKpis?.interviewed}
+            percentage={kpis?.recruiterKpis?.interviewedChangePercent}
+            direction={
+              kpis?.recruiterKpis?.interviewedChangePercent > 0
+                ? 'up'
+                : kpis?.recruiterKpis?.interviewedChangePercent < 0
+                ? 'down'
+                : 'neutral'
+            }
             comparison="vs last week"
             icon={
               <svg

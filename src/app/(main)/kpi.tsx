@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
 
 const fixedHeights = [
   [20, 25, 30],
@@ -10,26 +10,44 @@ const fixedHeights = [
   [18, 30, 22],
 ];
 
-export default function KPI({ title, value, percentage, comparison, icon, bgClass, direction = 'up' }) {
+export default function KPI({
+  title,
+  value,
+  percentage,
+  comparison,
+  icon,
+  bgClass,
+  direction = 'up', // 'up', 'down', or 'neutral'
+}) {
+  const getDirectionIcon = () => {
+    if (direction === 'up') {
+      return <ArrowUpRight className="w-4 h-4 mr-1 text-green-600" />;
+    } else if (direction === 'down') {
+      return <ArrowDownRight className="w-4 h-4 mr-1 text-red-600" />;
+    }
+    return <Minus className="w-4 h-4 mr-1 text-gray-500" />;
+  };
+
+  const getDirectionColor = () => {
+    if (direction === 'up') return 'text-green-600';
+    if (direction === 'down') return 'text-red-600';
+    return 'text-gray-500';
+  };
+
   return (
     <div className={`${bgClass} flex-[1] rounded-2xl p-6 w-full max-w-sm shadow-md h-70`}>
       <div className="flex justify-between items-start">
         <div>
           <p className="text-sm font-bold">{title}</p>
           <div className="flex items-center mt-1">
-            <h2 className="text-5xl font-semibold">{value}</h2>
+            <h2 className="text-5xl font-semibold"> +{value}</h2>
             <div className="pl-2">
               <div className="flex items-center text-sm font-medium px-2 py-1 bg-white rounded-full ml-2 shadow-sm">
-                {direction === 'up' ? (
-                  <ArrowUpRight className="w-4 h-4 mr-1 text-green-600" />
-                ) : (
-                  <ArrowDownRight className="w-4 h-4 mr-1 text-red-600" />
-                )}
-                <span className={direction === 'up' ? 'text-green-600' : 'text-red-600'}>
-                  {percentage}
+                {getDirectionIcon()}
+                <span className={getDirectionColor()}>
+                  {Math.abs(percentage)}%
                 </span>
               </div>
-
               <p className="text-sm mt-1 pl-2 text-gray-600 font-thin">{comparison}</p>
             </div>
           </div>

@@ -7,5 +7,12 @@ import SidebarJobSeeker from './SidebarJobSeeker';
 export default function SidebarWrapper() {
   const { role } = useRole();
 
-  return role === 'recruiter' ? <SidebarRecruiter /> : <SidebarJobSeeker />;
+
+  if (role === 'recruiter') {
+    return <SidebarRecruiter />;
+  }
+
+  if (role === 'jobseeker') {
+    return <SidebarJobSeeker />;
+  }
 }

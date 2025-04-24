@@ -1,0 +1,10 @@
+query RecruiterKpis {
+  recruiterKpis {
+    interviewed
+    interviewedChangePercent
+    jobsPosted
+    jobsPostedChangePercent
+    totalApplicants
+    totalApplicantsChangePercent
+  }
+}

@@ -1,0 +1,12 @@
+query JobSeekerKpis {
+  jobSeekerKpis {
+    followUps
+    followUpsChangePercent
+    interviewsAttended
+    interviewsAttendedChangePercent
+    jobsApplied
+    jobsAppliedChangePercent
+    pendingInterviews
+    pendingInterviewsChangePercent
+  }
+}
