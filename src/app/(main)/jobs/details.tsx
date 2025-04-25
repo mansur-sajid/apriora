@@ -56,6 +56,9 @@ export default function DetailsPanel({ open, onClose, job, applied = false }) {
       open={visible}
       onClose={onClose}
       hideBackdrop={false}
+      sx={{
+       zIndex: 100000,
+      }}
       PaperProps={{
         sx: {
           width: 800,
@@ -65,6 +68,7 @@ export default function DetailsPanel({ open, onClose, job, applied = false }) {
           borderBottomLeftRadius: "16px",
           overflow: "visible",
           boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.1)",
+          zIndex: 100000,
         },
       }}
     >

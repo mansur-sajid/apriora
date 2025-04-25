@@ -2,18 +2,28 @@
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import React, { useState } from "react";
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, subMonths, format, isSameMonth, isSameDay } from "date-fns";
-import Popup from "./interview"; // Import the Popup component
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, subMonths, format, isSameMonth, isSameDay, parseISO } from "date-fns";
+import Popup from "./interview";
+import { useAppliedJobsQuery } from "@/libs/gql-client";
+import { useRole } from "../RoleContext";
+
 
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-// Dates with interviews (format: yyyy-mm-dd)
-const interviewDates = ["2025-04-21", "2025-04-24", "2025-05-03", format(new Date(), "yyyy-MM-dd")]; // Include today's date dynamically
-
 export default function CalendarGrid() {
+  const { data: appliedJobPosts, isLoading } = useAppliedJobsQuery();
+  const { role } = useRole();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showPopup, setShowPopup] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [interviewsForSelectedDate, setInterviewsForSelectedDate] = useState([]);
+  
+
+  // Extract interview dates from the data
+  const interviewDates = appliedJobPosts?.appliedJobPosts.map(job => {
+    const interviewDate = job.interview?.scheduledAt;
+    return interviewDate ? format(parseISO(interviewDate), "yyyy-MM-dd") : null;
+  }).filter(date => date);
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
@@ -40,16 +50,36 @@ export default function CalendarGrid() {
 
   const handleDateClick = (date) => {
     const dateString = format(date, "yyyy-MM-dd");
-    if (interviewDates.includes(dateString)) {
-      setSelectedDate(date); // Store the clicked date
-      setShowPopup(true); // Show the popup
+    
+    // Find all interviews for this date
+    const interviewsOnDate = appliedJobPosts.appliedJobPosts.filter(job => {
+      if (!job.interview?.scheduledAt) return false;
+      const interviewDate = format(parseISO(job.interview.scheduledAt), "yyyy-MM-dd");
+      return interviewDate === dateString;
+    });
+
+    if (interviewsOnDate.length > 0) {
+      setSelectedDate(date);
+      setInterviewsForSelectedDate(interviewsOnDate);
+      setShowPopup(true);
     }
   };
 
   const closePopup = () => {
-    setShowPopup(false); // Close the popup
+    setShowPopup(false);
     setSelectedDate(null);
+    setInterviewsForSelectedDate([]);
   };
+
+  
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <div className="text-xl">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-hidden pt-2 relative">
@@ -80,9 +110,10 @@ export default function CalendarGrid() {
 
         <div className="grid grid-cols-7 gap-2">
           {calendarRows.flat().map((date, idx) => {
-            const isInterview = interviewDates.includes(format(date, "yyyy-MM-dd"));
+            const dateString = format(date, "yyyy-MM-dd");
+            const isInterview = interviewDates.includes(dateString);
             const isToday = isSameDay(date, new Date());
-            const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+            const dayOfWeek = date.getDay();
             const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
             return (
@@ -90,9 +121,9 @@ export default function CalendarGrid() {
                 key={idx}
                 className={`h-24 flex justify-center items-center rounded-lg text-sm cursor-pointer ${
                   isInterview && isToday
-                    ? "bg-[var(--pinkshade)] hover:bg-[var(--purpleshade)]" // Both interview and today -> purple
+                    ? "bg-[var(--pinkshade)] hover:bg-[var(--purpleshade)]"
                     : isInterview
-                    ? "bg-[var(--blueshade)] hover:bg-[var(--purpleshade)]" // Interview only -> blue
+                    ? "bg-[var(--blueshade)] hover:bg-[var(--purpleshade)]"
                     : isSameMonth(date, currentDate)
                     ? `${isWeekend ? "bg-transparent text-gray-500" : "bg-transparent text-black"} hover:bg-transparent`
                     : ""
@@ -105,11 +136,15 @@ export default function CalendarGrid() {
           })}
         </div>
 
-        {/* Render Popup if it's open */}
         {showPopup && selectedDate && (
-          <Popup selectedDate={selectedDate} closePopup={closePopup} />
+          <Popup 
+            selectedDate={selectedDate} 
+            closePopup={closePopup} 
+            interviews={interviewsForSelectedDate}
+          />
         )}
       </div>
+      
     </div>
   );
 }

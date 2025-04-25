@@ -7,16 +7,20 @@ import {
   Button,
   Stack,
   IconButton,
-  Chip,
 } from '@mui/material';
+import DetailsPanel from "../jobs/details";
 import CloseIcon from '@mui/icons-material/Close';
+import { useRole } from '../RoleContext';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
-export default function InterviewPopup({ selectedDate, closePopup }) {
+export default function InterviewPopup({ selectedDate, closePopup, interviews }) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  if (!selectedDate) return null;
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const { role } = useRole();
+  if (!selectedDate || !interviews.length) return null;
 
   const style = {
     position: 'absolute',
@@ -31,33 +35,12 @@ export default function InterviewPopup({ selectedDate, closePopup }) {
     textAlign: 'center',
   };
 
-  // Mock multiple interviews for a single day
-  const interviews = [
-    {
-      name: 'Jordan Maccan',
-      role: 'Front-End Developer',
-      company: 'PayPal',
-      avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-      time: '11:30 AM to 12:45 PM',
-    },
-    {
-      name: 'Lana Stone',
-      role: 'UI/UX Designer',
-      company: 'Adobe',
-      avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
-      time: '1:15 PM to 2:30 PM',
-    },
-    {
-      name: 'Eli Noor',
-      role: 'Backend Engineer',
-      company: 'Spotify',
-      avatar: 'https://randomuser.me/api/portraits/men/65.jpg',
-      time: '3:00 PM to 4:00 PM',
-    },
-  ];
-
-  
   const current = interviews[currentIndex];
+  const jobPost = current.jobPost;
+  const interview = current.interview;
+  const interviewTime = current.interview?.scheduledAt 
+    ? format(parseISO(current.interview.scheduledAt), 'h:mm a') 
+    : 'Time not specified';
 
   const goLeft = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : interviews.length - 1));
@@ -66,9 +49,14 @@ export default function InterviewPopup({ selectedDate, closePopup }) {
   const goRight = () => {
     setCurrentIndex((prev) => (prev < interviews.length - 1 ? prev + 1 : 0));
   };
+  const handleDetailsClick = (job) => {
+    setSelectedJob(job); // Set selected job data
+    setIsDetailsOpen(true); // Open the details panel
+  };
 
   return (
-    <Modal open={!!selectedDate} onClose={closePopup}>
+    <>
+    <Modal open={!!selectedDate} onClose={closePopup} >
       <Box sx={style}>
         <IconButton
           onClick={closePopup}
@@ -77,7 +65,6 @@ export default function InterviewPopup({ selectedDate, closePopup }) {
           <CloseIcon />
         </IconButton>
 
-        {/* Arrows for navigation */}
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <IconButton onClick={goLeft}>
             <ArrowBackIosNewIcon />
@@ -92,24 +79,25 @@ export default function InterviewPopup({ selectedDate, closePopup }) {
 
         <Stack spacing={2} alignItems="center" mt={1}>
           <Avatar
-            alt={current.name}
-            src={current.avatar}
+            alt={role === 'jobseeker' ? jobPost.company?.name : interview.user?.name}
+            src="/default-avatar.png" // You can replace with actual avatar if available
             sx={{ width: 80, height: 80 }}
           />
           <Typography variant="h6" fontWeight="bold">
-            {current.name}
+          {role === 'jobseeker' ? jobPost.title : interview.user?.name}
           </Typography>
-          <Typography variant="body2" color="var(--icons)">
-            {current.role}
+          <Typography variant="body2">
+            { role === 'jobseeker' ? jobPost.company?.name : jobPost.title }
           </Typography>
          
           <Typography variant="body2" color="text.secondary">
-            {format(selectedDate, 'MMMM dd, yyyy')} — {current.time}
+            {format(selectedDate, 'MMMM dd, yyyy')} — {interviewTime}
           </Typography>
 
           <Stack direction="row" spacing={2} mt={2}>
             <Button
               variant="outlined"
+              onClick={() => handleDetailsClick(jobPost)}
               sx={{
                 color: 'var(--icons)',
                 borderColor: 'var(--icons)',
@@ -125,11 +113,18 @@ export default function InterviewPopup({ selectedDate, closePopup }) {
                 },
               }}
             >
-              View Details
+              View Job Details
             </Button>
           </Stack>
         </Stack>
       </Box>
+      
     </Modal>
+    <DetailsPanel
+        open={isDetailsOpen}
+        onClose={() => setIsDetailsOpen(false)}
+        job={jobPost}
+        />
+    </>
   );
 }

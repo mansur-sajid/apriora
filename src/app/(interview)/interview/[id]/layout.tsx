@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Interview Page",
+  title: "Interview Room | Naxiora",
 };
 
 export default function InterviewRootLayout({ children }: { children: React.ReactNode }) {

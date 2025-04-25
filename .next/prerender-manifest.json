@@ -1,6 +1,30 @@
 {
   "version": 4,
   "routes": {
+    "/login": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/login",
+      "dataRoute": "/login.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/manifest.webmanifest": {
       "initialHeaders": {
         "cache-control": "public, max-age=0, must-revalidate",
@@ -30,30 +54,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/calendar": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/calendar",
-      "dataRoute": "/calendar.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/auth/signin": {
       "experimentalBypassFor": [
         {
@@ -69,6 +69,30 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/auth/signin",
       "dataRoute": "/auth/signin.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/calendar": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/calendar",
+      "dataRoute": "/calendar.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -126,30 +150,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/login": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/login",
-      "dataRoute": "/login.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/reports": {
       "experimentalBypassFor": [
         {
@@ -174,7 +174,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/": {
+    "/underconstruction": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -187,8 +187,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/",
-      "dataRoute": "/index.rsc",
+      "srcRoute": "/underconstruction",
+      "dataRoute": "/underconstruction.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -222,7 +222,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/underconstruction": {
+    "/": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -235,8 +235,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/underconstruction",
-      "dataRoute": "/underconstruction.rsc",
+      "srcRoute": "/",
+      "dataRoute": "/index.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -250,8 +250,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "01206f994db59ff6ac9b7fff5304c3a5",
-    "previewModeSigningKey": "46644f4f82da1a2c874f2473d99f8d48d624be239ca85993f7d28a82058118e9",
-    "previewModeEncryptionKey": "bb175a6b54767994056e2ffbcfca5bf2b3e21ff3bf8d7ffd7da86a5b95939ffd"
+    "previewModeId": "8b771d65dbae2265026f6cc698571b09",
+    "previewModeSigningKey": "119c7e229ed3c252afe6961a0735c0acb97d6a3e43111d0b67cde89238d4799a",
+    "previewModeEncryptionKey": "b49067d2fd3d22b2ca68780a998c1cc555920f22119aa96c5eb4fbadfc5339a0"
   }
 }

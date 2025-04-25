@@ -27,11 +27,11 @@ export default function JobBoardPage() {
   const [sort, setSort] = useState("newest");
   const [filters, setFilters] = useState({
     jobType: {
-      fullTime: true,
+      fullTime: false,
       partTime: false,
       contractual: false,
     },
-    salaryRange: [0, 500],
+    salaryRange: [0, 300],
   });
 
   const [arrowFlipped, setArrowFlipped] = useState(false);
@@ -42,11 +42,11 @@ export default function JobBoardPage() {
   const handleReset = () => {
     setFilters({
       jobType: {
-        fullTime: true,
+        fullTime: false,
         partTime: false,
         contractual: false,
       },
-      salaryRange: [0, 500],
+      salaryRange: [0, 300],
     });
   };
   const handleApply = () => {
@@ -63,7 +63,7 @@ export default function JobBoardPage() {
   const jobApply = () => {
     console.log("Applying to job with details:", applicationDetails);
     if (!jobToApply) return;
-    
+
     setIsModalOpen(false);
     setJobToApply(null);
   };
@@ -73,12 +73,51 @@ export default function JobBoardPage() {
 
   if (isLoading) {
     return (
-      <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" height="100vh">
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="center"
+        height="100vh"
+      >
         <CircularProgress />
-        <Typography variant="body1" sx={{ mt: 2 }}>Fetching available jobs...</Typography>
+        <Typography variant="body1" sx={{ mt: 2 }}>
+          Fetching available jobs...
+        </Typography>
       </Box>
     );
   }
+
+  const filterJobs = (jobs) => {
+    if (!jobs) return [];
+
+    return jobs.filter((job) => {
+      // Filter by job type
+      const jobTypeMatch =
+        (!filters.jobType.fullTime &&
+          !filters.jobType.partTime &&
+          !filters.jobType.contractual) || // Show all if none selected
+        (filters.jobType.fullTime && job.employmentType === "full_time") ||
+        (filters.jobType.partTime && job.employmentType === "part_time") ||
+        (filters.jobType.contractual && job.employmentType === "contract");
+
+      // Filter by salary range
+      const salaryMatch =
+        job.salary >= filters.salaryRange[0] &&
+        job.salary <= filters.salaryRange[1];
+
+      // Filter by search term
+      const searchMatch =
+        search === "" ||
+        job.title.toLowerCase().includes(search.toLowerCase()) ||
+        job.company?.name.toLowerCase().includes(search.toLowerCase()) ||
+        job.description.toLowerCase().includes(search.toLowerCase());
+
+      return jobTypeMatch && salaryMatch && searchMatch;
+    });
+  };
+
+  const filteredJobs = filterJobs(unappliedJobs?.unappliedJobPosts || []);
 
   return (
     <div className="p-1 tab-jobs bg-[var(--background)]">
@@ -146,15 +185,15 @@ export default function JobBoardPage() {
             </div>
           </div>
 
-          {unappliedJobs ? (
+          {filteredJobs.length > 0 ? (
             <Jobs
               title="Available Jobs"
               itemsPerPage={20}
-              jobs={unappliedJobs.unappliedJobPosts}
+              jobs={filteredJobs}
             />
           ) : (
             <div className="flex items-center justify-center h-20">
-              <p>No applied jobs found.</p>
+              <p>No jobs match your filters.</p>
             </div>
           )}
         </div>

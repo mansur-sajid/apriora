@@ -43,6 +43,55 @@ export default function Home() {
   };
   const { data: appliedJobs, isLoading: isl1 } = useAppliedJobsQuery();
   const { data: kpis, isLoading: isl2 } = useJobSeekerKpisQuery();
+  
+  const [filters, setFilters] = useState({
+    jobType: {
+      fullTime: false,
+      partTime: false,
+      contractual: false,
+    },
+    salaryRange: [0, 3000],
+  });
+
+  const handleReset = () => {
+    setFilters({
+      jobType: {
+        fullTime: false,
+        partTime: false,
+        contractual: false,
+      },
+      salaryRange: [0, 3000],
+    });
+  };
+  const handleApply = () => {
+    console.log("Filters applied:", filters);
+  };
+
+  const filterJobs = (jobs) => {
+    if (!jobs) return [];
+    
+    return jobs.filter(job => {
+      // Filter by job type
+      const jobTypeMatch = 
+      (!filters.jobType.fullTime && !filters.jobType.partTime && !filters.jobType.contractual) || // Show all if none selected
+      (filters.jobType.fullTime && job.jobPost.employmentType === 'full_time') ||
+      (filters.jobType.partTime && job.jobPost.employmentType === 'part_time') ||
+      (filters.jobType.contractual && job.jobPost.employmentType === 'contract');
+      
+      // Filter by salary range
+      const salaryMatch = 
+        job.jobPost.salary >= filters.salaryRange[0]  && 
+        job.jobPost.salary <= filters.salaryRange[1] ;
+      
+      // Filter by search term
+
+      
+      return jobTypeMatch && salaryMatch;
+    });
+  };
+  
+  const filteredJobs = filterJobs(appliedJobs?.appliedJobPosts || []);
+
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -248,12 +297,12 @@ export default function Home() {
         </div>
         {/* Filtered Jobs List */}
         <div className="flex-[0.8] pt-5">
-          {appliedJobs ? (
+          {filteredJobs ? (
             <Jobs
               title="Applied Jobs"
               itemsPerPage={5}
               applied={true}
-              jobs={appliedJobs.appliedJobPosts}
+              jobs={filteredJobs}
             />
           ) : (
             <div>Loading...</div>
@@ -261,7 +310,12 @@ export default function Home() {
         </div>
       </div>
       <div className="flex-[0.2]">
-        <Filters />
+      <Filters
+            filters={filters}
+            setFilters={setFilters}
+            onReset={handleReset}
+            onApply={handleApply}
+          />
       </div>
     </div>
   );

@@ -48,7 +48,7 @@ export default function Sidebar() {
 
   return (
     <div className="custom-sidenav group  items-center w-15 hover:w-40 bg-white  rounded-[15px] flex flex-col  pt-6  transition-all duration-300 ease-in-out overflow-hidden">
-      <img src="/logo.png" alt="Logo" className="custom-sidenav-logo mb-10 w-14 h-14" />
+      <img src="/logo1.png" alt="Logo" className="custom-sidenav-logo mb-10 w-14 h-14" />
 
       <div className="flex flex-col gap-4 w-full">
         <SidebarIcon href="/" icon={<DashboardIcon />} pathname={pathname} label="Dashboard"/>

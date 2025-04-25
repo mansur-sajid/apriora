@@ -29,6 +29,9 @@ query AppliedJobs {
     }
     interview {
       scheduledAt
+      user {
+        name
+      }
     }
   }
 }
