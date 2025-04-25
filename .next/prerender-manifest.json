@@ -1,6 +1,35 @@
 {
   "version": 4,
   "routes": {
+    "/manifest.webmanifest": {
+      "initialHeaders": {
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/manifest+json",
+        "x-next-cache-tags": "_N_T_/layout,_N_T_/manifest.webmanifest/layout,_N_T_/manifest.webmanifest/route,_N_T_/manifest.webmanifest"
+      },
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/manifest.webmanifest",
+      "dataRoute": null,
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/login": {
       "experimentalBypassFor": [
         {
@@ -25,12 +54,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/manifest.webmanifest": {
-      "initialHeaders": {
-        "cache-control": "public, max-age=0, must-revalidate",
-        "content-type": "application/manifest+json",
-        "x-next-cache-tags": "_N_T_/layout,_N_T_/manifest.webmanifest/layout,_N_T_/manifest.webmanifest/route,_N_T_/manifest.webmanifest"
-      },
+    "/intro": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -43,8 +67,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/manifest.webmanifest",
-      "dataRoute": null,
+      "srcRoute": "/intro",
+      "dataRoute": "/intro.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -174,7 +198,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/underconstruction": {
+    "/": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -187,8 +211,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/underconstruction",
-      "dataRoute": "/underconstruction.rsc",
+      "srcRoute": "/",
+      "dataRoute": "/index.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -222,7 +246,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/": {
+    "/underconstruction": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -235,8 +259,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/",
-      "dataRoute": "/index.rsc",
+      "srcRoute": "/underconstruction",
+      "dataRoute": "/underconstruction.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -250,8 +274,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "8b771d65dbae2265026f6cc698571b09",
-    "previewModeSigningKey": "119c7e229ed3c252afe6961a0735c0acb97d6a3e43111d0b67cde89238d4799a",
-    "previewModeEncryptionKey": "b49067d2fd3d22b2ca68780a998c1cc555920f22119aa96c5eb4fbadfc5339a0"
+    "previewModeId": "5e543d0aee822afd1bae7621c5376c0b",
+    "previewModeSigningKey": "2c25b76002d849e3aaf19f76096d65ba00cbb56c288de3b37c20ee7e6f133dbf",
+    "previewModeEncryptionKey": "70d411ced2830c135bc5ecc9849e3dbe067fbc0f83066e86867dd0fa5a619f6f"
   }
 }

@@ -71,6 +71,12 @@
       "namedRegex": "^/dashboard\\-jobseeker(?:/)?$"
     },
     {
+      "page": "/intro",
+      "regex": "^/intro(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/intro(?:/)?$"
+    },
+    {
       "page": "/jobs",
       "regex": "^/jobs(?:/)?$",
       "routeKeys": {},
