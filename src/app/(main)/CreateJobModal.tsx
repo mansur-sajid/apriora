@@ -2,9 +2,19 @@ import React, { useState } from "react";
 import { useForm, FormProvider, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from "@tanstack/react-query";
+import ReactQuill from "react-quill-new";
+import "react-quill-new/dist/quill.snow.css";
 
-import { useCreateJobPostMutation, IJobPostPayTypeEnum, IJobPostStatusEnum, IWorkModeEnum, IAvailabilityEnum, IEmploymentTypeEnum, toGlobalId } from "@apriora/titan/gql-client";
+import {
+  useCreateJobPostMutation,
+  IJobPostPayTypeEnum,
+  IJobPostStatusEnum,
+  IWorkModeEnum,
+  IAvailabilityEnum,
+  IEmploymentTypeEnum,
+  toGlobalId,
+} from "@apriora/titan/gql-client";
 import {
   Box,
   TextField,
@@ -36,7 +46,10 @@ const step2Schema = z.object({
 });
 
 const step3Schema = z.object({
-  applicationLimit: z.coerce.number().int("Application limit must be an integer").min(1, "Application limit is required"),
+  applicationLimit: z.coerce
+    .number()
+    .int("Application limit must be an integer")
+    .min(1, "Application limit is required"),
   workStartDate: z.string().min(1, "Work start date is required"),
   expiresAt: z.coerce.date({
     required_error: "Please select an end date",
@@ -72,15 +85,13 @@ const MultiStepFormModal = ({
 }) => {
   const [step, setStep] = useState(0);
   const queryClient = useQueryClient();
-  const {mutateAsync: createJobPost} = useCreateJobPostMutation({
+  const { mutateAsync: createJobPost } = useCreateJobPostMutation({
     onSuccess: () => {
-      queryClient.invalidateQueries({ 
-        queryKey: ['JobsPosts'] 
+      queryClient.invalidateQueries({
+        queryKey: ["JobsPosts"],
       });
-    }
-
+    },
   });
-  
 
   const methods = useForm<FullForm>({
     resolver: zodResolver(fullSchema),
@@ -115,18 +126,13 @@ const MultiStepFormModal = ({
     if (step === 1)
       valid = await trigger(["city", "workMode", "employmentType"]);
     if (step === 2)
-      valid = await trigger([
-        "applicationLimit",
-        "workStartDate",
-        "expiresAt",
-      ]);
+      valid = await trigger(["applicationLimit", "workStartDate", "expiresAt"]);
 
     if (step === 3) valid = await trigger(["questions"]);
 
     if (valid) setStep((s) => s + 1);
   };
-  
-  
+
   const { fields, append, remove } = useFieldArray({
     // @ts-expect-error – we know this is okay for now
     name: "questions",
@@ -138,7 +144,7 @@ const MultiStepFormModal = ({
   const onSubmit = async (data: FullForm) => {
     try {
       console.log("Submitted:", data);
-      
+
       await createJobPost({
         data: {
           title: data.title,
@@ -146,7 +152,10 @@ const MultiStepFormModal = ({
           department: data.department,
           description: data.description,
           city: data.city,
-          companyId: toGlobalId("CompanyType", "42fe9ce9-ccf9-4197-8ea2-aff660ab3968"), // Replace with actual company ID
+          companyId: toGlobalId(
+            "CompanyType",
+            "42fe9ce9-ccf9-4197-8ea2-aff660ab3968"
+          ), // Replace with actual company ID
           availibility: data.availability,
           workMode: data.workMode,
           employmentType: data.employmentType,
@@ -161,7 +170,7 @@ const MultiStepFormModal = ({
           status: IJobPostStatusEnum.Draft,
         },
       });
-      
+
       methods.reset();
       setStep(0);
       onClose();
@@ -204,23 +213,124 @@ const MultiStepFormModal = ({
                   margin="normal"
                 />
                 <TextField
-  fullWidth
-  label="Salary"
-  {...register("salary")}
-  error={!!errors.salary}
-  helperText={errors.salary?.message}
-  margin="normal"
-/>
-                <TextField
                   fullWidth
-                  label="Description"
-                  {...register("description")}
-                  error={!!errors.description}
-                  helperText={errors.description?.message}
+                  label="Salary"
+                  {...register("salary")}
+                  error={!!errors.salary}
+                  helperText={errors.salary?.message}
                   margin="normal"
-                  multiline
-                  rows={4}
                 />
+                <Box marginY={2}>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Description
+                  </Typography>
+                  <Box
+                    sx={{
+                      "& .ql-container": {
+                        minHeight: "200px",
+                        fontSize: "16px",
+                        fontFamily:
+                          '"Roboto", "Helvetica", "Arial", sans-serif',
+                      },
+                      "& .ql-editor": {
+                        minHeight: "200px",
+                        "& a": {
+                          color: "#1976d2",
+                          textDecoration: "underline",
+                          "&:hover": {
+                            textDecoration: "none",
+                          },
+                        },
+                        "&.ql-blank::before": {
+                          color: "rgba(0, 0, 0, 0.6)",
+                          fontStyle: "normal",
+                          left: "12px",
+                        },
+                      },
+                      "& .ql-toolbar": {
+                        borderTopLeftRadius: "4px",
+                        borderTopRightRadius: "4px",
+                        borderColor: "rgba(0, 0, 0, 0.23)",
+                      },
+                      "& .ql-container.ql-snow": {
+                        borderBottomLeftRadius: "4px",
+                        borderBottomRightRadius: "4px",
+                        borderColor: "rgba(0, 0, 0, 0.23)",
+                      },
+                      "&:hover .ql-toolbar, &:hover .ql-container.ql-snow": {
+                        borderColor: "rgba(0, 0, 0, 0.87)",
+                      },
+                      "& .ql-snow .ql-picker-label:hover, & .ql-snow .ql-picker-label.ql-active":
+                        {
+                          color: "#1976d2",
+                        },
+                      "& .ql-snow .ql-stroke": {
+                        stroke: "rgba(0, 0, 0, 0.87)",
+                      },
+                      "& .ql-snow .ql-fill": {
+                        fill: "rgba(0, 0, 0, 0.87)",
+                      },
+                      "& .ql-snow.ql-toolbar button:hover, & .ql-snow.ql-toolbar button:focus":
+                        {
+                          color: "#1976d2",
+                          "& .ql-stroke": {
+                            stroke: "#1976d2",
+                          },
+                          "& .ql-fill": {
+                            fill: "#1976d2",
+                          },
+                          "& .ql-tooltip": {
+                            left: "0 !important", // Force tooltip to stay within container
+                            maxWidth: "100%",
+                          },
+                          "& .ql-editing": {
+                            left: "0 !important",
+                            whiteSpace: "nowrap",
+                          },
+                          '& .ql-tooltip input[type="text"]': {
+                            width: "100%",
+                            maxWidth: "200px", // Adjust as needed
+                          },
+                        },
+                    }}
+                  >
+                    <ReactQuill
+                      value={methods.watch("description")}
+                      onChange={(value) =>
+                        methods.setValue("description", value)
+                      }
+                      theme="snow"
+                      modules={{
+                        toolbar: [
+                          [{ header: [1, 2, 3, false] }],
+                          ["bold", "italic", "underline", "strike"],
+                          [{ list: "ordered" }, { list: "bullet" }],
+                          ["link"],
+                          ["clean"],
+                        ],
+                        clipboard: {
+                          matchVisual: false, // Prevents odd styling issues when pasting
+                        },
+                      }}
+                      formats={[
+                        "header",
+                        "bold",
+                        "italic",
+                        "underline",
+                        "strike",
+                        "list",
+                        "bullet",
+                        "link",
+                      ]}
+                      placeholder="Enter job description..."
+                    />
+                  </Box>
+                  {errors.description && (
+                    <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+                      {errors.description.message}
+                    </Typography>
+                  )}
+                </Box>
               </>
             )}
 
@@ -260,9 +370,8 @@ const MultiStepFormModal = ({
                   margin="normal"
                 >
                   <MenuItem value="ON_SITE">On-site</MenuItem>
-<MenuItem value="REMOTE">Remote</MenuItem>
-<MenuItem value="HYBRID">Hybrid</MenuItem>
-
+                  <MenuItem value="REMOTE">Remote</MenuItem>
+                  <MenuItem value="HYBRID">Hybrid</MenuItem>
                 </TextField>
 
                 <TextField
@@ -302,7 +411,7 @@ const MultiStepFormModal = ({
                   margin="normal"
                   InputLabelProps={{ shrink: true }}
                 />
-      
+
                 <TextField
                   fullWidth
                   label="End Date"
@@ -354,33 +463,33 @@ const MultiStepFormModal = ({
         </DialogContent>
 
         <DialogActions>
-  <Button
-    onClick={() => {
-      methods.reset(); // Reset form to default values
-      setStep(0);
-      onClose();       // Close the modal
-    }}
-    variant="text"
-    color="inherit"
-  >
-    Cancel
-  </Button>
+          <Button
+            onClick={() => {
+              methods.reset(); // Reset form to default values
+              setStep(0);
+              onClose(); // Close the modal
+            }}
+            variant="text"
+            color="inherit"
+          >
+            Cancel
+          </Button>
 
-  {step > 0 && (
-    <Button onClick={previousStep} variant="outlined">
-      Back
-    </Button>
-  )}
-  {step < steps.length - 1 ? (
-    <Button onClick={nextStep} variant="contained">
-      Next
-    </Button>
-  ) : (
-    <Button variant="contained" onClick={handleSubmit(onSubmit)}>
-      Submit
-    </Button>
-  )}
-</DialogActions>
+          {step > 0 && (
+            <Button onClick={previousStep} variant="outlined">
+              Back
+            </Button>
+          )}
+          {step < steps.length - 1 ? (
+            <Button onClick={nextStep} variant="contained">
+              Next
+            </Button>
+          ) : (
+            <Button variant="contained" onClick={handleSubmit(onSubmit)}>
+              Submit
+            </Button>
+          )}
+        </DialogActions>
       </Dialog>
     </FormProvider>
   );

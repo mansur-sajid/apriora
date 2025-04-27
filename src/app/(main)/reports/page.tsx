@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 
 import { useGetAllSummariesQuery } from "@apriora/titan/gql-client";
+import SummaryModal from "./Summarymodal";
 
 const InterviewSummaryPage = () => {
   const { data: summaries, isLoading } = useGetAllSummariesQuery();
@@ -44,10 +45,10 @@ const InterviewSummaryPage = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>User Name</TableCell>
-                <TableCell>Job Title</TableCell>
-                <TableCell>Scheduled At</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>User Name</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Job Title</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Scheduled At</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -70,53 +71,16 @@ const InterviewSummaryPage = () => {
         </TableContainer>
       )}
 
-      <Modal open={open} onClose={handleClose}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-          }}
-        >
-          {selected && (
-            <>
-              <Typography variant="h6" gutterBottom>
-                Full Summary
-              </Typography>
-              <Typography gutterBottom>{selected.summary.summary.summary}</Typography>
-              <Box mt={2}>
-                <Typography variant="subtitle2">
-                  Curiosity: {selected.summary.summary.curiosity}
-                </Typography>
-                <Typography variant="subtitle2">
-                  Experience: {selected.summary.summary.experience}
-                </Typography>
-                <Typography variant="subtitle2">
-                  Culture Fit: {selected.summary.summary.culture_fit}
-                </Typography>
-                <Typography variant="subtitle2">
-                  Communication: {selected.summary.summary.communication}
-                </Typography>
-                <Typography variant="subtitle2">
-                  Problem Solving: {selected.summary.summary.problem_solving}
-                </Typography>
-                <Typography variant="subtitle2">
-                  Technical Ability: {selected.summary.summary.technical_ability}
-                </Typography>
-                <Typography variant="subtitle2">
-                  Overall Score: {selected.summary.summary.overall_score}
-                </Typography>
-              </Box>
-            </>
-          )}
-        </Box>
-      </Modal>
+      {selected && (
+        <SummaryModal
+          open={open}
+          onClose={handleClose}
+          summary={selected.summary.summary}
+          jobTitle={selected.jobPost.title}
+          userName={`${selected.user.firstName} ${selected.user.lastName}`}
+          interviewDate={selected.interview.scheduledAt}
+        />
+      )}
     </Box>
   );
 };

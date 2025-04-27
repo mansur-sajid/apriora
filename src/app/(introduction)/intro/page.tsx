@@ -152,7 +152,7 @@ const VideoLandingPage: NextPage = () => {
           <p className="text-xl mb-8 animate-fade-in delay-100">
             Join the future of recruitment with <NaxioraText text="Naxiora" />&apos;s AI-powered platform.
           </p>
-          <button onClick={() => router.push("/")} className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-full text-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg animate-jump animate-infinite animate-duration-[2000ms] animate-delay-200">
+          <button onClick={() => router.push("/login")} className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-full text-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg animate-jump animate-infinite animate-duration-[2000ms] animate-delay-200">
             Try It Now
           </button>
         </section>

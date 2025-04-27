@@ -1,15 +1,9 @@
 "use client";
 import React from "react";
 import { useEffect, useState } from "react";
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from "date-fns";
 
-import {
-  Drawer,
-  Box,
-  Typography,
-  IconButton,
-  Divider,
-} from "@mui/material";
+import { Drawer, Box, Typography, IconButton, Divider } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowForwardIos";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -57,7 +51,7 @@ export default function DetailsPanel({ open, onClose, job, applied = false }) {
       onClose={onClose}
       hideBackdrop={false}
       sx={{
-       zIndex: 100000,
+        zIndex: 100000,
       }}
       PaperProps={{
         sx: {
@@ -125,11 +119,16 @@ export default function DetailsPanel({ open, onClose, job, applied = false }) {
               <Typography color="#7e5ca0">
                 {job.company.name || "Nomad"}
               </Typography>
-              
+
               <Box className="flex items-center mt-1">
-                <AccessTimeIcon sx={{ fontSize: 16, mr: 1, color: "text.secondary" }} />
+                <AccessTimeIcon
+                  sx={{ fontSize: 16, mr: 1, color: "text.secondary" }}
+                />
                 <Typography variant="body2" color="text.secondary">
-                  Updated {formatDistanceToNow(new Date(job.updatedAt), { addSuffix: true })}
+                  Updated{" "}
+                  {formatDistanceToNow(new Date(job.updatedAt), {
+                    addSuffix: true,
+                  })}
                 </Typography>
               </Box>
             </Box>
@@ -143,47 +142,65 @@ export default function DetailsPanel({ open, onClose, job, applied = false }) {
           <Box className="flex items-center gap-2">
             <LocationOnIcon className="text-[#636363]" />
             <Box>
-              <Typography variant="caption" color="text.secondary">Location</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Location
+              </Typography>
               <Typography variant="body2">{job.city}</Typography>
             </Box>
           </Box>
-          
+
           <Box className="flex items-center gap-2">
             <WorkIcon className="text-[#636363]" />
             <Box>
-              <Typography variant="caption" color="text.secondary">Work Mode</Typography>
-              <Typography variant="body2">{workModeLabels[job.workMode]}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Work Mode
+              </Typography>
+              <Typography variant="body2">
+                {workModeLabels[job.workMode]}
+              </Typography>
             </Box>
           </Box>
-          
+
           <Box className="flex items-center gap-2">
             <ScheduleIcon className="text-[#636363]" />
             <Box>
-              <Typography variant="caption" color="text.secondary">Employment Type</Typography>
-              <Typography variant="body2">{typeLabels[job.employmentType]}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Employment Type
+              </Typography>
+              <Typography variant="body2">
+                {typeLabels[job.employmentType]}
+              </Typography>
             </Box>
           </Box>
-          
+
           <Box className="flex items-center gap-2">
             <AccessTimeIcon className="text-[#636363]" />
             <Box>
-              <Typography variant="caption" color="text.secondary">Availability</Typography>
-              <Typography variant="body2">{availabilityLabels[job.availibility]}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Availability
+              </Typography>
+              <Typography variant="body2">
+                {availabilityLabels[job.availibility]}
+              </Typography>
             </Box>
           </Box>
-          
+
           <Box className="flex items-center gap-2">
             <AttachMoneyIcon className="text-[#636363]" />
             <Box>
-              <Typography variant="caption" color="text.secondary">Salary</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Salary
+              </Typography>
               <Typography variant="body2">${job.salary}K</Typography>
             </Box>
           </Box>
-          
+
           <Box className="flex items-center gap-2">
             <BusinessIcon className="text-[#636363]" />
             <Box>
-              <Typography variant="caption" color="text.secondary">Department</Typography>
+              <Typography variant="caption" color="text.secondary">
+                Department
+              </Typography>
               <Typography variant="body2">{job.department}</Typography>
             </Box>
           </Box>
@@ -194,9 +211,69 @@ export default function DetailsPanel({ open, onClose, job, applied = false }) {
           <Typography variant="h6" fontWeight="bold" gutterBottom>
             Job Description
           </Typography>
-          <Typography variant="caption" paragraph>
-            {job.description || "No job description provided."}
-          </Typography>
+          <Box
+            sx={{
+              "& h1": { fontSize: "2em", margin: "0.67em 0" },
+              "& h2": { fontSize: "1.5em", margin: "0.75em 0" },
+              "& h3": { fontSize: "1.17em", margin: "0.83em 0" },
+              "& p": { margin: "0 0" },
+              // Unordered lists - bullet points
+              "& ul": {
+                listStyleType: "disc", // This gives you bullet points
+                paddingLeft: "2.5em",
+                margin: "1em 0",
+                "& li": {
+                  display: "list-item",
+                  paddingLeft: "0.5em",
+                  // Explicitly set no numbering for ul items
+                  '&[data-list="ordered"]': {
+                    listStyleType: "none", // Hide numbers if they appear in ul
+                  },
+                },
+              },
+              // Ordered lists - numbers
+              "& ol": {
+                listStyleType: "decimal", // This gives you numbers
+                paddingLeft: "2.5em",
+                margin: "1em 0",
+                "& li": {
+                  display: "list-item",
+                  paddingLeft: "0.5em",
+                  // Explicitly set no bullets for ol items
+                  '&[data-list="bullet"]': {
+                    listStyleType: "none", // Hide bullets if they appear in ol
+                  },
+                },
+              },
+              "& strong": { fontWeight: "bold" },
+              "& em": { fontStyle: "italic" },
+              "& u": { textDecoration: "underline" },
+              "& a": {
+                color: "primary.main",
+                textDecoration: "underline",
+                "&:hover": { textDecoration: "none" },
+              },
+              "& blockquote": {
+                borderLeft: "4px solid #ccc",
+                margin: "1em 0",
+                paddingLeft: "1em",
+                color: "#666",
+              },
+              "& .ql-ui": { display: "none" },
+              // Additional safeguard for list items
+              '& li[data-list="bullet"]': {
+                listStyleType: "disc !important",
+              },
+              '& li[data-list="ordered"]': {
+                listStyleType: "decimal !important",
+              },
+            }}
+            dangerouslySetInnerHTML={{
+              __html: 
+                job.description || "<p>No job description provided.</p>"
+              
+            }}
+          />
         </Box>
       </Box>
     </Drawer>

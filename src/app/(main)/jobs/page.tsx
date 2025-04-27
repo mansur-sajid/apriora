@@ -32,6 +32,13 @@ export default function JobBoardPage() {
       contractual: false,
     },
     salaryRange: [0, 300],
+    availability: {
+      immediate: false,
+      one_week_notice: false,
+      two_weeks_notice: false,
+      three_weeks_notice: false,
+      four_weeks_notice: false,
+    },
   });
 
   const [arrowFlipped, setArrowFlipped] = useState(false);
@@ -47,6 +54,13 @@ export default function JobBoardPage() {
         contractual: false,
       },
       salaryRange: [0, 300],
+      availability: {
+        immediate: false,
+        one_week_notice: false,
+        two_weeks_notice: false,
+        three_weeks_notice: false,
+        four_weeks_notice: false,
+      },
     });
   };
   const handleApply = () => {
@@ -113,7 +127,16 @@ export default function JobBoardPage() {
         job.company?.name.toLowerCase().includes(search.toLowerCase()) ||
         job.description.toLowerCase().includes(search.toLowerCase());
 
-      return jobTypeMatch && salaryMatch && searchMatch;
+      // Filter by availability
+      const selectedAvailabilities = Object.keys(filters.availability).filter(
+        (key) => filters.availability[key]
+      );
+      
+      const availabilityMatch =
+        selectedAvailabilities.length === 0 || 
+        selectedAvailabilities.includes(job.availibility);
+
+      return jobTypeMatch && salaryMatch && searchMatch && availabilityMatch;
     });
   };
 

@@ -8,7 +8,10 @@ import Filters from "../jobs/filters";
 import KPI from "../kpi";
 import Jobs from "../jobstable";
 import InterviewCard from "../interviewcard";
-import { useAppliedJobsQuery, useJobSeekerKpisQuery } from "@apriora/titan/gql-client";
+import {
+  useAppliedJobsQuery,
+  useJobSeekerKpisQuery,
+} from "@apriora/titan/gql-client";
 
 export default function Home() {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -43,7 +46,7 @@ export default function Home() {
   };
   const { data: appliedJobs, isLoading: isl1 } = useAppliedJobsQuery();
   const { data: kpis, isLoading: isl2 } = useJobSeekerKpisQuery();
-  
+
   const [filters, setFilters] = useState({
     jobType: {
       fullTime: false,
@@ -51,6 +54,13 @@ export default function Home() {
       contractual: false,
     },
     salaryRange: [0, 3000],
+    availability: {
+      immediate: false,
+      one_week_notice: false,
+      two_weeks_notice: false,
+      three_weeks_notice: false,
+      four_weeks_notice: false,
+    },
   });
 
   const handleReset = () => {
@@ -61,6 +71,13 @@ export default function Home() {
         contractual: false,
       },
       salaryRange: [0, 3000],
+      availability: {
+        immediate: false,
+        one_week_notice: false,
+        two_weeks_notice: false,
+        three_weeks_notice: false,
+        four_weeks_notice: false,
+      },
     });
   };
   const handleApply = () => {
@@ -69,29 +86,39 @@ export default function Home() {
 
   const filterJobs = (jobs) => {
     if (!jobs) return [];
-    
-    return jobs.filter(job => {
-      // Filter by job type
-      const jobTypeMatch = 
-      (!filters.jobType.fullTime && !filters.jobType.partTime && !filters.jobType.contractual) || // Show all if none selected
-      (filters.jobType.fullTime && job.jobPost.employmentType === 'full_time') ||
-      (filters.jobType.partTime && job.jobPost.employmentType === 'part_time') ||
-      (filters.jobType.contractual && job.jobPost.employmentType === 'contract');
-      
-      // Filter by salary range
-      const salaryMatch = 
-        job.jobPost.salary >= filters.salaryRange[0]  && 
-        job.jobPost.salary <= filters.salaryRange[1] ;
-      
-      // Filter by search term
 
-      
-      return jobTypeMatch && salaryMatch;
+    return jobs.filter((job) => {
+      // Filter by job type
+      const jobTypeMatch =
+        (!filters.jobType.fullTime &&
+          !filters.jobType.partTime &&
+          !filters.jobType.contractual) || // Show all if none selected
+        (filters.jobType.fullTime &&
+          job.jobPost.employmentType === "full_time") ||
+        (filters.jobType.partTime &&
+          job.jobPost.employmentType === "part_time") ||
+        (filters.jobType.contractual &&
+          job.jobPost.employmentType === "contract");
+
+      // Filter by salary range
+      const salaryMatch =
+        job.jobPost.salary >= filters.salaryRange[0] &&
+        job.jobPost.salary <= filters.salaryRange[1];
+
+      // Filter by availability
+      const selectedAvailabilities = Object.keys(filters.availability).filter(
+        (key) => filters.availability[key]
+      );
+
+      const availabilityMatch =
+        selectedAvailabilities.length === 0 ||
+        selectedAvailabilities.includes(job.jobPost.availibility);
+
+      return jobTypeMatch && salaryMatch && availabilityMatch;
     });
   };
-  
-  const filteredJobs = filterJobs(appliedJobs?.appliedJobPosts || []);
 
+  const filteredJobs = filterJobs(appliedJobs?.appliedJobPosts || []);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -108,10 +135,6 @@ export default function Home() {
     return day > 0 && day <= daysInMonth ? day : null;
   });
 
-
-  
-  
-
   return (
     <div className="dashboard-j archivo">
       {/* Right dashboard content */}
@@ -127,12 +150,11 @@ export default function Home() {
                 percentage={kpis?.jobSeekerKpis?.jobsAppliedChangePercent}
                 direction={
                   kpis?.jobSeekerKpis?.jobsAppliedChangePercent > 0
-                    ? 'up'
+                    ? "up"
                     : kpis?.jobSeekerKpis?.jobsAppliedChangePercent < 0
-                    ? 'down'
-                    : 'neutral'
+                      ? "down"
+                      : "neutral"
                 }
-                
                 comparison="vs last week"
                 icon={
                   <svg
@@ -151,21 +173,21 @@ export default function Home() {
                   </svg>
                 }
                 bgClass="blueshade"
-                
               />
               {/* Job stats box */}
               <KPI
                 title="Interviews Attended"
                 value={kpis?.jobSeekerKpis?.interviewsAttended}
-                percentage={kpis?.jobSeekerKpis?.interviewsAttendedChangePercent}
+                percentage={
+                  kpis?.jobSeekerKpis?.interviewsAttendedChangePercent
+                }
                 direction={
                   kpis?.jobSeekerKpis?.interviewsAttendedChangePercent > 0
-                    ? 'up'
+                    ? "up"
                     : kpis?.jobSeekerKpis?.interviewsAttendedChangePercent < 0
-                    ? 'down'
-                    : 'neutral'
+                      ? "down"
+                      : "neutral"
                 }
-                
                 comparison="vs last week"
                 icon={
                   <svg
@@ -194,10 +216,10 @@ export default function Home() {
                 percentage={kpis?.jobSeekerKpis?.followUpsChangePercent}
                 direction={
                   kpis?.jobSeekerKpis?.followUpsChangePercent > 0
-                    ? 'up'
+                    ? "up"
                     : kpis?.jobSeekerKpis?.followUpsChangePercent < 0
-                    ? 'down'
-                    : 'neutral'
+                      ? "down"
+                      : "neutral"
                 }
                 comparison="vs last week"
                 icon={
@@ -224,12 +246,11 @@ export default function Home() {
                 percentage={kpis?.jobSeekerKpis?.pendingInterviewsChangePercent}
                 direction={
                   kpis?.jobSeekerKpis?.pendingInterviewsChangePercent > 0
-                    ? 'up'
+                    ? "up"
                     : kpis?.jobSeekerKpis?.pendingInterviewsChangePercent < 0
-                    ? 'down'
-                    : 'neutral'
+                      ? "down"
+                      : "neutral"
                 }
-                
                 comparison="vs last week"
                 icon={
                   <svg
@@ -310,12 +331,12 @@ export default function Home() {
         </div>
       </div>
       <div className="flex-[0.2]">
-      <Filters
-            filters={filters}
-            setFilters={setFilters}
-            onReset={handleReset}
-            onApply={handleApply}
-          />
+        <Filters
+          filters={filters}
+          setFilters={setFilters}
+          onReset={handleReset}
+          onApply={handleApply}
+        />
       </div>
     </div>
   );
