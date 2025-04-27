@@ -9,6 +9,7 @@ const VideoLandingPage: NextPage = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const router = useRouter();
+  const [showEmailPopup, setShowEmailPopup] = useState(false);
 
   useEffect(() => {
     const attemptPlay = () => {
@@ -54,6 +55,51 @@ const VideoLandingPage: NextPage = () => {
         </video>
         <div className="absolute inset-0 bg-black/40"></div>
       </div>
+
+      {/* Floating Contact Button */}
+      <button 
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 z-40 flex items-center space-x-2"
+        onClick={() => setShowEmailPopup(true)}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <span>Contact</span>
+      </button>
+
+      {/* Email Popup */}
+      {showEmailPopup && (
+        <div 
+          className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm animate-fade-in"
+          onClick={() => setShowEmailPopup(false)}
+        >
+          <div 
+            className="bg-gradient-to-br from-blue-600/90 to-purple-600/90 p-6 rounded-xl shadow-2xl max-w-md mx-4 relative animate-pop-in"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button 
+              className="absolute top-2 right-2 text-white/70 hover:text-white transition-colors"
+              onClick={() => setShowEmailPopup(false)}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <h3 className="text-xl font-bold mb-4 text-white">Contact Us</h3>
+            <div className="flex items-center justify-center space-x-2 bg-white/10 p-4 rounded-lg">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              <a 
+                href="mailto:info@naxiora.com" 
+                className="text-xl font-mono text-white hover:underline"
+              >
+                info@naxiora.com
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Scrollable content container */}
       <div className="relative min-h-screen w-full pt-20 pb-32">
