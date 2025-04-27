@@ -53,7 +53,7 @@ export default function Home() {
       partTime: false,
       contractual: false,
     },
-    salaryRange: [0, 3000],
+    salaryRange: [null, null],
     availability: {
       immediate: false,
       one_week_notice: false,
@@ -70,7 +70,7 @@ export default function Home() {
         partTime: false,
         contractual: false,
       },
-      salaryRange: [0, 3000],
+      salaryRange: [null, null],
       availability: {
         immediate: false,
         one_week_notice: false,
@@ -101,9 +101,10 @@ export default function Home() {
           job.jobPost.employmentType === "contract");
 
       // Filter by salary range
+      const [minSalary, maxSalary] = filters.salaryRange;
       const salaryMatch =
-        job.jobPost.salary >= filters.salaryRange[0] &&
-        job.jobPost.salary <= filters.salaryRange[1];
+        (minSalary === null || job.jobPost.salary >= minSalary) &&
+        (maxSalary === null || job.jobPost.salary <= maxSalary);
 
       // Filter by availability
       const selectedAvailabilities = Object.keys(filters.availability).filter(

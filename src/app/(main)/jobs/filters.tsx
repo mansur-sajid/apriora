@@ -1,10 +1,29 @@
 "use client";
 
-import { Checkbox, Slider, FormControlLabel } from "@mui/material";
+import { Checkbox, Slider, FormControlLabel, TextField } from "@mui/material";
+import { useState } from "react";
 
 export default function Filters({ filters, setFilters, onReset, onApply }) {
+  const defaultFilters = {
+    jobType: {
+      fullTime: false,
+      partTime: false,
+      contractual: false,
+    },
+    salaryRange: [null, null],
+    availability: {
+      immediate: false,
+      one_week_notice: false,
+      two_weeks_notice: false,
+      three_weeks_notice: false,
+      four_weeks_notice: false,
+    },
+  };
+
+  const [localFilters, setLocalFilters] = useState(filters);
+
   const handleJobTypeChange = (type) => {
-    setFilters((prev) => ({
+    setLocalFilters((prev) => ({
       ...prev,
       jobType: {
         ...prev.jobType,
@@ -13,21 +32,40 @@ export default function Filters({ filters, setFilters, onReset, onApply }) {
     }));
   };
 
-  const handleSalaryChange = (event, newValue) => {
-    setFilters((prev) => ({
+  const handleSalaryFromChange = (event) => {
+    const value = event.target.value ? parseInt(event.target.value) : null;
+    setLocalFilters((prev) => ({
       ...prev,
-      salaryRange: newValue,
+      salaryRange: [value, prev.salaryRange[1]],
+    }));
+  };
+
+  const handleSalaryToChange = (event) => {
+    const value = event.target.value ? parseInt(event.target.value) : null;
+    setLocalFilters((prev) => ({
+      ...prev,
+      salaryRange: [prev.salaryRange[0], value],
     }));
   };
 
   const handleAvailabilityChange = (type) => {
-    setFilters((prev) => ({
+    setLocalFilters((prev) => ({
       ...prev,
       availability: {
         ...prev.availability,
         [type]: !prev.availability[type],
       },
     }));
+  };
+
+  const handleApply = () => {
+    setFilters(localFilters);
+    if (onApply) onApply();
+  };
+
+  const handleReset = () => {
+    setLocalFilters(defaultFilters);
+    if (onReset) onReset();
   };
 
   return (
@@ -49,7 +87,7 @@ export default function Filters({ filters, setFilters, onReset, onApply }) {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={filters.jobType[type]}
+                    checked={localFilters.jobType[type]}
                     onChange={() => handleJobTypeChange(type)}
                     sx={{
                       color: "var(--icons)",
@@ -76,17 +114,29 @@ export default function Filters({ filters, setFilters, onReset, onApply }) {
         <h3 className="uppercase font-semibold text-xs textcolor mb-2">
           Salary
         </h3>
-        <Slider
-          value={filters.salaryRange}
-          onChange={handleSalaryChange}
-          valueLabelDisplay="off"
-          min={0}
-          max={300}
-          sx={{ color: "var(--icons)" }}
-        />
-        <div className="flex justify-between text-xs textcolor">
-          <span>${filters.salaryRange[0].toLocaleString()}</span>
-          <span>${filters.salaryRange[1].toLocaleString()}</span>
+        <div className="flex gap-2">
+          <TextField
+            label="Min"
+            type="number"
+            value={localFilters.salaryRange[0] ?? ""}
+            onChange={handleSalaryFromChange}
+            size="small"
+            fullWidth
+            InputProps={{
+              startAdornment: "$",
+            }}
+          />
+          <TextField
+            label="Max"
+            type="number"
+            value={localFilters.salaryRange[1] ?? ""}
+            onChange={handleSalaryToChange}
+            size="small"
+            fullWidth
+            InputProps={{
+              startAdornment: "$",
+            }}
+          />
         </div>
       </div>
 
@@ -107,7 +157,7 @@ export default function Filters({ filters, setFilters, onReset, onApply }) {
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={filters.availability?.[key] || false}
+                    checked={localFilters.availability?.[key] || false}
                     onChange={() => handleAvailabilityChange(key)}
                     sx={{
                       color: "var(--icons)",
@@ -127,10 +177,16 @@ export default function Filters({ filters, setFilters, onReset, onApply }) {
 
       <div className="flex justify-center gap-4 pt-4">
         <button
-          onClick={onReset}
+          onClick={handleReset}
           className="py-2 px-6 rounded-full border border-[var(--icons)] text-[var(--icons)] hover:bg-[var(--icons)] hover:text-white transition-all duration-200"
         >
           Reset
+        </button>
+        <button
+          onClick={handleApply}
+          className="py-2 px-6 rounded-full bg-[var(--icons)] text-white border border-transparent hover:bg-white hover:text-[var(--icons)] hover:border-[var(--icons)] transition-all duration-200"
+        >
+          Apply
         </button>
       </div>
     </div>

@@ -150,30 +150,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/jobs": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/jobs",
-      "dataRoute": "/jobs.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/reports": {
       "experimentalBypassFor": [
         {
@@ -198,7 +174,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/": {
+    "/jobs": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -211,8 +187,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/",
-      "dataRoute": "/index.rsc",
+      "srcRoute": "/jobs",
+      "dataRoute": "/jobs.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -269,13 +245,37 @@
         "x-next-revalidated-tags",
         "x-next-revalidate-tag-token"
       ]
+    },
+    "/": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/",
+      "dataRoute": "/index.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
     }
   },
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "e100dfc9d2bef51d3da5d52f50f552ff",
-    "previewModeSigningKey": "10423f1d74b8d529c130a324b7deb77eaebd6d1ca00cc5c9238aa298a488aec8",
-    "previewModeEncryptionKey": "817b4157efa60db4c4745d5e19c8bd3d3b7dd8317a358bb0d4b6a599bf1d47f2"
+    "previewModeId": "97b6db5882abfa282442c2270a8df340",
+    "previewModeSigningKey": "06d5f3cb8c1f32576a9a365ebd66a684059b1cccdc7dd43ebb69a167fe53d154",
+    "previewModeEncryptionKey": "e8cf632eb26fa05889b7ce50fc813f639323e73b08400267567c524150a54649"
   }
 }

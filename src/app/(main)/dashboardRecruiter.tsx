@@ -292,7 +292,7 @@ export default function Home() {
                             key={index}
                             className="hover:bg-white/40 transition"
                           >
-                            <td className="px-4 py-3">${job.salary}K</td>
+                            <td className="px-4 py-3">${job.salary}</td>
                             <td className="px-4 py-3">{job.title}</td>
                             <td className="px-4 py-3">{job.department}</td>
                             <td className="px-4 py-3">

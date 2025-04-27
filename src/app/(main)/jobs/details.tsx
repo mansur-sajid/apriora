@@ -191,7 +191,7 @@ export default function DetailsPanel({ open, onClose, job, applied = false }) {
               <Typography variant="caption" color="text.secondary">
                 Salary
               </Typography>
-              <Typography variant="body2">${job.salary}K</Typography>
+              <Typography variant="body2">${job.salary}</Typography>
             </Box>
           </Box>
 

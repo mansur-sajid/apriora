@@ -165,7 +165,7 @@ export default function JobTable({
           <tbody className="divide-y divide-gray-300">
             {paginatedJobs.map((job, index) => (
               <tr key={index} className="hover:bg-white/40 transition">
-                <td className="px-4 py-3">${applied ? job.jobPost.salary : job.salary}K</td>
+                <td className="px-4 py-3">${applied ? job.jobPost.salary : job.salary}</td>
                 <td className="px-4 py-3">{applied ? job.jobPost.title : job.title}</td>
                 <td className="px-4 py-3">{applied ? job.jobPost.department: job.department}</td>
                 <td className="px-4 py-3">

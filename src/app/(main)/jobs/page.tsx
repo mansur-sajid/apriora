@@ -31,7 +31,7 @@ export default function JobBoardPage() {
       partTime: false,
       contractual: false,
     },
-    salaryRange: [0, 300],
+    salaryRange: [null, null],
     availability: {
       immediate: false,
       one_week_notice: false,
@@ -53,7 +53,7 @@ export default function JobBoardPage() {
         partTime: false,
         contractual: false,
       },
-      salaryRange: [0, 300],
+      salaryRange: [null, null],
       availability: {
         immediate: false,
         one_week_notice: false,
@@ -116,9 +116,11 @@ export default function JobBoardPage() {
         (filters.jobType.contractual && job.employmentType === "contract");
 
       // Filter by salary range
-      const salaryMatch =
-        job.salary >= filters.salaryRange[0] &&
-        job.salary <= filters.salaryRange[1];
+      const [minSalary, maxSalary] = filters.salaryRange;
+    const salaryMatch =
+      (minSalary === null || job.salary >= minSalary) &&
+      (maxSalary === null || job.salary <= maxSalary);
+
 
       // Filter by search term
       const searchMatch =
