@@ -45,7 +45,7 @@ export default function KPI({
               <div className="flex items-center text-sm font-medium px-2 py-1 bg-white rounded-full ml-2 shadow-sm">
                 {getDirectionIcon()}
                 <span className={getDirectionColor()}>
-                  {Math.abs(percentage)}%
+                  {Math.abs(Math.round(percentage))}%
                 </span>
               </div>
               <p className="text-sm mt-1 pl-2 text-gray-600 font-thin">{comparison}</p>

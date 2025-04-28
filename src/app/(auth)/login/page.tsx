@@ -30,13 +30,13 @@ export default function LoginPage() {
           onClick={handleRecruiterLogin}
           className="custom-button flex items-center justify-center w-full p-4 text-lg cursor-pointer"
         >
-          Recruiter Login
+          Admin Portal
         </div>
         <div
           onClick={handleJobSeekerLogin}
           className="custom-button flex items-center justify-center w-full p-4 text-lg cursor-pointer"
         >
-          Job Seeker Login
+          User Portal
         </div>
       </div>
     </div>
