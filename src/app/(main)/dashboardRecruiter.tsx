@@ -293,7 +293,7 @@ export default function Home() {
                         Position
                       </th>
                       <th className="px-4 py-3 font-medium text-[#7e5ca0]">
-                        Department
+                      Client Name
                       </th>
                       <th className="px-4 py-3 font-medium text-[#7e5ca0]">
                         Availability
