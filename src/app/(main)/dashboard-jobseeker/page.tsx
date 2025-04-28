@@ -15,6 +15,10 @@ import {
 
 export default function Home() {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const today = new Date();
+  const todayDate = today.getDate();
+  const todayMonth = today.getMonth();
+  const todayYear = today.getFullYear();
 
   const daysOfWeek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
@@ -299,12 +303,12 @@ export default function Home() {
                   </div>
                 ))}
                 {daysArray.map((day, i) => {
-                  const today = day === 14 && month === 3 && year === 2025;
+                  const isToday = day === todayDate && month === todayMonth && year === todayYear;
                   return (
                     <div
                       key={i}
                       className={`w-12 h-12 rounded-full flex justify-center items-center text-sm relative
-        ${today ? "purpleshade font-bold text-black" : ""}`}
+        ${isToday ? "purpleshade font-bold text-black" : ""}`}
                     >
                       {day || ""}
                     </div>
