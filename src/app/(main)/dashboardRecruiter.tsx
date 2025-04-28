@@ -292,7 +292,7 @@ export default function Home() {
                       <th className="px-4 py-3 font-medium text-[#7e5ca0]">
                         Position
                       </th>
-                      <th className="px-4 py-3 font-medium text-[#7e5ca0]">
+                      <th className="px-4 py-3 font-medium text-[#7e5ca0] whitespace-nowrap">
                       Client Name
                       </th>
                       <th className="px-4 py-3 font-medium text-[#7e5ca0]">
