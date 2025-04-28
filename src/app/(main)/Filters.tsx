@@ -1,79 +1,129 @@
-'use client';
+"use client";
 
-import { Checkbox, Slider, FormControlLabel, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
-import { useState } from 'react';
+import {
+  Checkbox,
+  Slider,
+  FormControlLabel,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  TextField,
+} from "@mui/material";
+import { useState } from "react";
 
-export default function Filter() {
-  const [jobType, setJobType] = useState({
-    contract: true,
-    partTime: true,
-    fullTime: true,
-  });
+interface FiltersProps {
+  cities: string[];
+  onApplyFilters?: (filters: {
+    jobType: typeof defaultJobType;
+    availability: string[];
+    salaryRange: number[];
+    location: string;
+  }) => void;
+}
 
-  const [availability, setAvailability] = useState({
-    hired: false,
-    open: true,
-  });
+const defaultJobType = {
+  contract: false,
+  partTime: false,
+  fullTime: false,
+};
 
-  const [salaryRange, setSalaryRange] = useState([0, 200000]);
-  const [location, setLocation] = useState('');
+const defaultSalaryRange = [null, null] as [number | null, number | null];
 
-  const handleSliderChange = (event, newValue) => {
-    setSalaryRange(newValue);
+export default function Filters({ cities, onApplyFilters }: FiltersProps) {
+  const [jobType, setJobType] = useState(defaultJobType);
+  const [selectedAvailability, setSelectedAvailability] = useState<string[]>(
+    []
+  );
+  const [salaryRange, setSalaryRange] =
+    useState<[number | null, number | null]>(defaultSalaryRange);
+
+  const [location, setLocation] = useState("");
+
+  const availabilityOptions = [
+    { key: "immediate", label: "Immediate" },
+    { key: "one_week_notice", label: "1 Week Notice" },
+    { key: "two_weeks_notice", label: "2 Weeks Notice" },
+    { key: "three_weeks_notice", label: "3 Weeks Notice" },
+    { key: "four_weeks_notice", label: "4 Weeks Notice" },
+  ];
+
+  const handleSliderChange = (event: any, newValue: number | number[]) => {
+    setSalaryRange([
+      Array.isArray(newValue) ? newValue[0] : null,
+      Array.isArray(newValue) ? newValue[1] : null,
+    ]);
   };
 
-  const handleLocationChange = (event) => {
+  const handleLocationChange = (event: any) => {
     setLocation(event.target.value);
+  };
+
+  const handleAvailabilityChange = (key: string) => {
+    setSelectedAvailability((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    );
+  };
+
+  const handleReset = () => {
+    setJobType(defaultJobType);
+    setSelectedAvailability([]);
+    setSalaryRange(defaultSalaryRange);
+    setLocation("");
+    onApplyFilters(null);
+  };
+
+  const handleApply = () => {
+    if (onApplyFilters) {
+      onApplyFilters({
+        jobType,
+        availability: selectedAvailability,
+        salaryRange,
+        location,
+      });
+    }
   };
 
   return (
     <div className="p-4 bg-white rounded-[20px] space-y-6 w-full text-sm h-full">
-      
-     <div className="flex items-center justify-between">
-  <h2 className="text-base font-semibold text-[var(--foreground)] uppercase tracking-wide">
-    Filters
-  </h2>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5 text-[var(--foreground)]"
-    viewBox="0 0 20 20"
-    fill="currentColor"
-  >
-    <path d="M10 6a2 2 0 114.001.001A2 2 0 0110 6zm0 5a2 2 0 114.001.001A2 2 0 0110 11zm0 5a2 2 0 114.001.001A2 2 0 0110 16z" />
-  </svg>
-</div>
+      {/* Filters header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-semibold text-[var(--foreground)] uppercase tracking-wide">
+          Filters
+        </h2>
+      </div>
 
-
-
-
-
-
-      {/* JOB TYPE */}
+      {/* Job Type */}
       <div>
-        <h3 className="uppercase font-semibold text-xs textcolor mb-2">Job Type</h3>
+        <h3 className="uppercase font-semibold text-xs textcolor mb-2">
+          Job Type
+        </h3>
         <div className="space-y-1">
-          {['contract', 'partTime', 'fullTime'].map((key) => (
+          {Object.keys(defaultJobType).map((key) => (
             <div key={key} className="rounded px-1 py-1">
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={jobType[key]}
-                    onChange={() => setJobType({ ...jobType, [key]: !jobType[key] })}
+                    checked={jobType[key as keyof typeof defaultJobType]}
+                    onChange={() =>
+                      setJobType({
+                        ...jobType,
+                        [key]: !jobType[key as keyof typeof jobType],
+                      })
+                    }
                     sx={{
-                      color: 'var(--icons)',
-                      '&.Mui-checked': {
-                        color: 'var(--icons)',
-                      },
-                      borderRadius: '6px',
+                      color: "var(--icons)",
+                      "&.Mui-checked": { color: "var(--icons)" },
+                      borderRadius: "6px",
                     }}
                   />
                 }
                 label={
-                  key === 'contract'
-                    ? 'Contract'
-                    : key === 'partTime'
-                    ? 'Part-Time'
-                    : 'Full-Time'
+                  key === "contract"
+                    ? "Contract"
+                    : key === "partTime"
+                      ? "Part-Time"
+                      : "Full-Time"
                 }
               />
             </div>
@@ -83,53 +133,77 @@ export default function Filter() {
 
       {/* SALARY */}
       <div>
-        <h3 className="uppercase font-semibold text-xs textcolor mb-2">Salary</h3>
-        <Slider
-          value={salaryRange}
-          onChange={handleSliderChange}
-          valueLabelDisplay="off"
-          min={0}
-          max={200000}
-          sx={{ color: 'var(--icons)' }}
-        />
-        <div className="flex justify-between text-xs textcolor">
-          <span>${salaryRange[0].toLocaleString()}</span>
-          <span>${salaryRange[1].toLocaleString()}</span>
+        <h3 className="uppercase font-semibold text-xs textcolor mb-2">
+          Salary
+        </h3>
+        <div className="flex gap-2">
+          <TextField
+            label="Min"
+            type="number"
+            size="small"
+            fullWidth
+            value={salaryRange[0] ?? ""}
+            onChange={(e) =>
+              setSalaryRange([
+                e.target.value === "" ? null : Number(e.target.value),
+                salaryRange[1],
+              ])
+            }
+            InputProps={{
+              startAdornment: "$",
+            }}
+          />
+          <TextField
+            label="Max"
+            type="number"
+            size="small"
+            fullWidth
+            value={salaryRange[1] ?? ""}
+            onChange={(e) =>
+              setSalaryRange([
+                salaryRange[0],
+                e.target.value === "" ? null : Number(e.target.value),
+              ])
+            }
+            InputProps={{
+              startAdornment: "$",
+            }}
+          />
         </div>
       </div>
 
       {/* AVAILABILITY */}
       <div>
-        <h3 className="uppercase font-semibold text-xs textcolor mb-2">Availability</h3>
+        <h3 className="uppercase font-semibold text-xs textcolor mb-2">
+          Availability
+        </h3>
         <div className="space-y-1">
-          {['hired', 'open'].map((key) => (
+          {availabilityOptions.map(({ key, label }) => (
             <div key={key} className="rounded px-1 py-1">
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={availability[key]}
-                    onChange={() =>
-                      setAvailability({ ...availability, [key]: !availability[key] })
-                    }
+                    checked={selectedAvailability.includes(key)}
+                    onChange={() => handleAvailabilityChange(key)}
                     sx={{
-                      color: 'var(--icons)',
-                      '&.Mui-checked': {
-                        color: 'var(--icons)',
-                      },
-                      borderRadius: '6px',
+                      color: "var(--icons)",
+                      "&.Mui-checked": { color: "var(--icons)" },
+                      borderRadius: "6px",
                     }}
                   />
                 }
-                label={key === 'hired' ? 'Hired' : 'Open for Hiring'}
+                label={label}
               />
             </div>
           ))}
         </div>
       </div>
 
-      {/* LOCATION DROPDOWN */}
+      {/* Location Dropdown */}
       <div>
-        <h3 className="uppercase font-semibold text-xs textcolor mb-2">Location</h3>
+        <h3 className="uppercase font-semibold text-xs textcolor mb-2">
+          Location
+        </h3>
         <FormControl fullWidth size="small">
           <InputLabel id="location-label">Select Location</InputLabel>
           <Select
@@ -138,24 +212,29 @@ export default function Filter() {
             label="Select Location"
             onChange={handleLocationChange}
           >
-            <MenuItem value="new-york">New York</MenuItem>
-            <MenuItem value="san-francisco">San Francisco</MenuItem>
-            <MenuItem value="london">London</MenuItem>
-            <MenuItem value="berlin">Berlin</MenuItem>
-            <MenuItem value="remote">Remote</MenuItem>
+            {cities.map((city) => (
+              <MenuItem key={city} value={city}>
+                {city}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
       </div>
 
-      {/* APPLY BUTTON */}
-      <div className="pt-1">
-        <div className="flex justify-center">
-          <button
-            className="py-2 px-6 rounded-full border border-[var(--icons)] text-[var(--icons)] hover:bg-[var(--icons)] hover:text-white transition-all duration-200"
-          >
-            Apply
-          </button>
-        </div>
+      {/* Apply and Reset Buttons */}
+      <div className="flex justify-center gap-4 pt-4">
+        <button
+          onClick={handleReset}
+          className="py-2 px-6 rounded-full border border-[var(--icons)] text-[var(--icons)] hover:bg-[var(--icons)] hover:text-white transition-all duration-200"
+        >
+          Reset
+        </button>
+        <button
+          onClick={handleApply}
+          className="py-2 px-6 rounded-full bg-[var(--icons)] text-white border border-transparent hover:bg-white hover:text-[var(--icons)] hover:border-[var(--icons)] transition-all duration-200"
+        >
+          Apply
+        </button>
       </div>
     </div>
   );

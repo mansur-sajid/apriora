@@ -18,6 +18,13 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
+  const [filters, setFilters] = useState<{
+    jobType: { contract: boolean; partTime: boolean; fullTime: boolean };
+    availability: string[];
+    salaryRange: [number | null, number | null];
+    location: string;
+  } | null>(null);
+  
   const [isCreateJobModalOpen, setIsCreateJobModalOpen] = useState(false);
   const {mutateAsync: createJobPost} = useCreateJobPostMutation();
 
@@ -66,8 +73,58 @@ export default function Home() {
   const { data: jobsPosts, isLoading } = useJobsPostsQuery();
   const { data: kpis } = useRecruiterKpisQuery();
 
-  const totalPages = isLoading ? 0 : Math.ceil(jobsPosts?.jobPosts.length / itemsPerPage);
+  const cities = Array.from(
+    new Set(
+      jobsPosts?.jobPosts
+        .map((job) => job.city)
+        .filter((city) => city && city.trim() !== '')
+    )
+  );
 
+  const filteredJobs = jobsPosts?.jobPosts.filter((job) => {
+    if (!filters) return true; // No filters applied
+  
+    // Job Type Filter
+    const jobTypeMatch = 
+      (!filters.jobType.contract && !filters.jobType.partTime && !filters.jobType.fullTime) || // No job type selected
+      (filters.jobType.contract && job.employmentType === 'contract') ||
+      (filters.jobType.partTime && job.employmentType === 'part_time') ||
+      (filters.jobType.fullTime && job.employmentType === 'full_time');
+  
+    // Availability Filter
+    const availabilityMatch = 
+      filters.availability.length === 0 || 
+      filters.availability.includes(job.availibility);
+  
+    // Salary Range Filter
+    const minSalaryMatch = 
+      filters.salaryRange[0] === null || 
+      (job.salary !== null && job.salary >= filters.salaryRange[0]);
+    const maxSalaryMatch = 
+      filters.salaryRange[1] === null || 
+      (job.salary !== null && job.salary <= filters.salaryRange[1]);
+  
+    // Location Filter
+    const locationMatch = 
+      !filters.location || 
+      (job.city && job.city.toLowerCase() === filters.location.toLowerCase());
+  
+    return jobTypeMatch && availabilityMatch && minSalaryMatch && maxSalaryMatch && locationMatch;
+  }) || [];
+  
+  
+
+  const totalPages = isLoading ? 0 : Math.ceil(filteredJobs.length / itemsPerPage);
+
+  const handleApplyFilters = (filtersData: {
+    jobType: { contract: boolean; partTime: boolean; fullTime: boolean };
+    availability: string[];
+    salaryRange: [number | null, number | null];
+    location: string;
+  }) => {
+    setFilters(filtersData);
+  };
+  
   return (
     <div className="tab-dashboard">
       <div className="flex flex-col flex-[0.8] gap-5">
@@ -282,7 +339,7 @@ export default function Home() {
                         </td>
                       </tr>
                     ) : (
-                      jobsPosts?.jobPosts
+                      filteredJobs
                         .slice(
                           (currentPage - 1) * itemsPerPage,
                           currentPage * itemsPerPage
@@ -352,7 +409,8 @@ export default function Home() {
         </div>
       </div>
       <div className="flex-[0.3]">
-        <Filters />
+      <Filters cities={cities} onApplyFilters={handleApplyFilters} />
+
       </div>
       <CreateJobModal
   open={isCreateJobModalOpen}
