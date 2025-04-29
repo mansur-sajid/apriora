@@ -6,12 +6,15 @@ import ArrowBackIos from '@mui/icons-material/ArrowBackIos';
 import Notifications from '@mui/icons-material/NotificationsNone';
 import Logout from '@mui/icons-material/Logout';
 import { IconButton, Badge } from '@mui/material';
+import { useRole } from './RoleContext';
 
 export default function Toolbox() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const profileRef = useRef(null); 
   const router = useRouter();
+  const {role} = useRole();
+  const img_l = role === 'recruiter' ? '/recPFP.jpeg' : '/pfp.jpg';
 
   const handleLogoutClick = () => {
     router.push('/login');
@@ -49,7 +52,7 @@ export default function Toolbox() {
           className="flex items-center purpleshade rounded-[20px] px-2 py-1 cursor-pointer"
         >
           <img
-            src="/pfp.jpg"
+            src={img_l}
             alt="Profile"
             className="h-10 w-10 object-cover rounded-[20px] border-2"
             style={{ borderColor: 'var(--icons)' }}
