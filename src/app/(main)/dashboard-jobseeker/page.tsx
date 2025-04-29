@@ -104,11 +104,7 @@ export default function Home() {
         (filters.jobType.contractual &&
           job.jobPost.employmentType === "contract");
 
-      // Filter by salary range
-      const [minSalary, maxSalary] = filters.salaryRange;
-      const salaryMatch =
-        (minSalary === null || job.jobPost.salary >= minSalary) &&
-        (maxSalary === null || job.jobPost.salary <= maxSalary);
+      
 
       // Filter by availability
       const selectedAvailabilities = Object.keys(filters.availability).filter(
@@ -119,7 +115,7 @@ export default function Home() {
         selectedAvailabilities.length === 0 ||
         selectedAvailabilities.includes(job.jobPost.availibility);
 
-      return jobTypeMatch && salaryMatch && availabilityMatch;
+      return jobTypeMatch && availabilityMatch;
     });
   };
 
@@ -303,7 +299,10 @@ export default function Home() {
                   </div>
                 ))}
                 {daysArray.map((day, i) => {
-                  const isToday = day === todayDate && month === todayMonth && year === todayYear;
+                  const isToday =
+                    day === todayDate &&
+                    month === todayMonth &&
+                    year === todayYear;
                   return (
                     <div
                       key={i}

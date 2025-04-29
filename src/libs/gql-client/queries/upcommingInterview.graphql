@@ -22,7 +22,8 @@ query UpcomingInterview {
     id
     payType
     startDate
-    salary
+    minSalary
+    maxSalary
     status
     title
     totalApplications

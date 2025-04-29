@@ -6,7 +6,10 @@ import Filters from "./Filters";
 import CreateJobModal from "./CreateJobModal";
 import { useJobsPostsQuery } from "@/libs/gql-client";
 import { format, parseISO } from "date-fns";
-import { useCreateJobPostMutation, useRecruiterKpisQuery } from "@/libs/gql-client";
+import {
+  useCreateJobPostMutation,
+  useRecruiterKpisQuery,
+} from "@/libs/gql-client";
 import {
   Menu,
   MenuItem,
@@ -24,14 +27,13 @@ export default function Home() {
     salaryRange: [number | null, number | null];
     location: string;
   } | null>(null);
-  
+
   const [isCreateJobModalOpen, setIsCreateJobModalOpen] = useState(false);
-  const {mutateAsync: createJobPost} = useCreateJobPostMutation();
+  const { mutateAsync: createJobPost } = useCreateJobPostMutation();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const itemsPerPage = 5;
-
 
   function formatDate(datetime: string): string {
     return format(parseISO(datetime), "MMMM d, yyyy");
@@ -49,7 +51,7 @@ export default function Home() {
     handleMenuClose();
     setIsCreateJobModalOpen(true);
   };
-  
+
   // Add this function to handle form submission
   const handleJobSubmit = (jobData: any) => {
     // Here you would typically send the data to your API
@@ -77,44 +79,43 @@ export default function Home() {
     new Set(
       jobsPosts?.jobPosts
         .map((job) => job.city)
-        .filter((city) => city && city.trim() !== '')
+        .filter((city) => city && city.trim() !== "")
     )
   );
 
-  const filteredJobs = jobsPosts?.jobPosts.filter((job) => {
-    if (!filters) return true; // No filters applied
-  
-    // Job Type Filter
-    const jobTypeMatch = 
-      (!filters.jobType.contract && !filters.jobType.partTime && !filters.jobType.fullTime) || // No job type selected
-      (filters.jobType.contract && job.employmentType === 'contract') ||
-      (filters.jobType.partTime && job.employmentType === 'part_time') ||
-      (filters.jobType.fullTime && job.employmentType === 'full_time');
-  
-    // Availability Filter
-    const availabilityMatch = 
-      filters.availability.length === 0 || 
-      filters.availability.includes(job.availibility);
-  
-    // Salary Range Filter
-    const minSalaryMatch = 
-      filters.salaryRange[0] === null || 
-      (job.salary !== null && job.salary >= filters.salaryRange[0]);
-    const maxSalaryMatch = 
-      filters.salaryRange[1] === null || 
-      (job.salary !== null && job.salary <= filters.salaryRange[1]);
-  
-    // Location Filter
-    const locationMatch = 
-      !filters.location || 
-      (job.city && job.city.toLowerCase() === filters.location.toLowerCase());
-  
-    return jobTypeMatch && availabilityMatch && minSalaryMatch && maxSalaryMatch && locationMatch;
-  }) || [];
-  
-  
+  const filteredJobs =
+    jobsPosts?.jobPosts.filter((job) => {
+      if (!filters) return true; // No filters applied
 
-  const totalPages = isLoading ? 0 : Math.ceil(filteredJobs.length / itemsPerPage);
+      // Job Type Filter
+      const jobTypeMatch =
+        (!filters.jobType.contract &&
+          !filters.jobType.partTime &&
+          !filters.jobType.fullTime) || // No job type selected
+        (filters.jobType.contract && job.employmentType === "contract") ||
+        (filters.jobType.partTime && job.employmentType === "part_time") ||
+        (filters.jobType.fullTime && job.employmentType === "full_time");
+
+      // Availability Filter
+      const availabilityMatch =
+        filters.availability.length === 0 ||
+        filters.availability.includes(job.availibility);
+
+      // Location Filter
+      const locationMatch =
+        !filters.location ||
+        (job.city && job.city.toLowerCase() === filters.location.toLowerCase());
+
+      return (
+        jobTypeMatch &&
+        availabilityMatch && // Using combined salaryMatch instead of separate min/max checks
+        locationMatch
+      );
+    }) || [];
+
+  const totalPages = isLoading
+    ? 0
+    : Math.ceil(filteredJobs.length / itemsPerPage);
 
   const handleApplyFilters = (filtersData: {
     jobType: { contract: boolean; partTime: boolean; fullTime: boolean };
@@ -124,7 +125,7 @@ export default function Home() {
   }) => {
     setFilters(filtersData);
   };
-  
+
   return (
     <div className="tab-dashboard">
       <div className="flex flex-col flex-[0.8] gap-5">
@@ -137,10 +138,10 @@ export default function Home() {
             percentage={kpis?.recruiterKpis?.jobsPostedChangePercent}
             direction={
               kpis?.recruiterKpis?.interviewedChangePercent > 0
-                ? 'up'
+                ? "up"
                 : kpis?.recruiterKpis?.interviewedChangePercent < 0
-                ? 'down'
-                : 'neutral'
+                  ? "down"
+                  : "neutral"
             }
             comparison="vs last week"
             icon={
@@ -168,10 +169,10 @@ export default function Home() {
             percentage={kpis?.recruiterKpis?.totalApplicantsChangePercent}
             direction={
               kpis?.recruiterKpis?.totalApplicantsChangePercent > 0
-                ? 'up'
+                ? "up"
                 : kpis?.recruiterKpis?.totalApplicantsChangePercent < 0
-                ? 'down'
-                : 'neutral'
+                  ? "down"
+                  : "neutral"
             }
             comparison="vs last week"
             icon={
@@ -194,7 +195,6 @@ export default function Home() {
               </svg>
             }
             bgClass="blueshade"
-            
           />
           <KPI
             title="Interviewed"
@@ -202,10 +202,10 @@ export default function Home() {
             percentage={kpis?.recruiterKpis?.interviewedChangePercent}
             direction={
               kpis?.recruiterKpis?.interviewedChangePercent > 0
-                ? 'up'
+                ? "up"
                 : kpis?.recruiterKpis?.interviewedChangePercent < 0
-                ? 'down'
-                : 'neutral'
+                  ? "down"
+                  : "neutral"
             }
             comparison="vs last week"
             icon={
@@ -293,7 +293,7 @@ export default function Home() {
                         Position
                       </th>
                       <th className="px-4 py-3 font-medium text-[#7e5ca0] whitespace-nowrap">
-                      Client Name
+                        Client
                       </th>
                       <th className="px-4 py-3 font-medium text-[#7e5ca0]">
                         Availability
@@ -349,7 +349,9 @@ export default function Home() {
                             key={index}
                             className="hover:bg-white/40 transition"
                           >
-                            <td className="px-4 py-3">${job.salary}</td>
+                            <td className="px-4 py-3">
+                              ${job.minSalary} - ${job.maxSalary}
+                            </td>
                             <td className="px-4 py-3">{job.title}</td>
                             <td className="px-4 py-3">{job.department}</td>
                             <td className="px-4 py-3">
@@ -409,14 +411,13 @@ export default function Home() {
         </div>
       </div>
       <div className="flex-[0.3]">
-      <Filters cities={cities} onApplyFilters={handleApplyFilters} />
-
+        <Filters cities={cities} onApplyFilters={handleApplyFilters} />
       </div>
       <CreateJobModal
-  open={isCreateJobModalOpen}
-  onClose={() => setIsCreateJobModalOpen(false)}
-  onSubmit={handleJobSubmit}
-/>
+        open={isCreateJobModalOpen}
+        onClose={() => setIsCreateJobModalOpen(false)}
+        onSubmit={handleJobSubmit}
+      />
     </div>
   );
 }

@@ -115,12 +115,7 @@ export default function JobBoardPage() {
         (filters.jobType.partTime && job.employmentType === "part_time") ||
         (filters.jobType.contractual && job.employmentType === "contract");
 
-      // Filter by salary range
-      const [minSalary, maxSalary] = filters.salaryRange;
-    const salaryMatch =
-      (minSalary === null || job.salary >= minSalary) &&
-      (maxSalary === null || job.salary <= maxSalary);
-
+      // Filter by salary range - check for ANY overlap
 
       // Filter by search term
       const searchMatch =
@@ -133,12 +128,12 @@ export default function JobBoardPage() {
       const selectedAvailabilities = Object.keys(filters.availability).filter(
         (key) => filters.availability[key]
       );
-      
+
       const availabilityMatch =
-        selectedAvailabilities.length === 0 || 
+        selectedAvailabilities.length === 0 ||
         selectedAvailabilities.includes(job.availibility);
 
-      return jobTypeMatch && salaryMatch && searchMatch && availabilityMatch;
+      return jobTypeMatch && searchMatch && availabilityMatch;
     });
   };
 

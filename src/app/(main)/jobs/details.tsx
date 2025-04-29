@@ -191,7 +191,7 @@ export default function DetailsPanel({ open, onClose, job, applied = false }) {
               <Typography variant="caption" color="text.secondary">
                 Salary
               </Typography>
-              <Typography variant="body2">${job.salary}</Typography>
+              <Typography variant="body2">${job.minSalary} - ${job.maxSalary}</Typography>
             </Box>
           </Box>
 
@@ -199,7 +199,7 @@ export default function DetailsPanel({ open, onClose, job, applied = false }) {
             <BusinessIcon className="text-[#636363]" />
             <Box>
               <Typography variant="caption" color="text.secondary">
-                Department
+                Client
               </Typography>
               <Typography variant="body2">{job.department}</Typography>
             </Box>

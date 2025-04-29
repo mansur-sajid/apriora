@@ -6,6 +6,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
+import {InputAdornment} from "@mui/material";
+
 import {
   useCreateJobPostMutation,
   IJobPostPayTypeEnum,
@@ -35,7 +37,8 @@ const step1Schema = z.object({
   title: z.string().min(1, "Title is required"),
   department: z.string().min(1, "Department is required"),
   description: z.string().min(1, "Description is required"),
-  salary: z.coerce.number().min(1, "Salary must be greater than 0"),
+  minSalary: z.coerce.number().min(1, "Minimum salary must be greater than 0"),
+  maxSalary: z.coerce.number().min(1, "Maximum salary must be greater than 0"),
 });
 
 const step2Schema = z.object({
@@ -76,6 +79,14 @@ const steps = [
   "Questions",
 ];
 
+// Helper function to encode salary range
+const encodeSalaryRange = (min: number, max: number): number => {
+  const minStr = min.toString();
+  const maxStr = max.toString();
+  const encoded = `${minStr.length}${maxStr.length}${minStr}${maxStr}`;
+  return parseInt(encoded, 10);
+};
+
 const MultiStepFormModal = ({
   open,
   onClose,
@@ -101,7 +112,8 @@ const MultiStepFormModal = ({
       department: "",
       description: "",
       city: "",
-      salary: 0,
+      minSalary: 0,
+      maxSalary: 0,
       availability: IAvailabilityEnum.Immediate,
       workMode: IWorkModeEnum.OnSite,
       employmentType: IEmploymentTypeEnum.FullTime,
@@ -122,7 +134,13 @@ const MultiStepFormModal = ({
   const nextStep = async () => {
     let valid = false;
     if (step === 0)
-      valid = await trigger(["title", "department", "description", "salary"]);
+      valid = await trigger([
+        "title",
+        "department",
+        "description",
+        "minSalary",
+        "maxSalary",
+      ]);
     if (step === 1)
       valid = await trigger(["city", "workMode", "employmentType"]);
     if (step === 2)
@@ -134,7 +152,7 @@ const MultiStepFormModal = ({
   };
 
   const { fields, append, remove } = useFieldArray({
-    // @ts-expect-error – we know this is okay for now
+    //@ts-expect-error dedefined in the schema
     name: "questions",
     control: methods.control,
   });
@@ -143,7 +161,7 @@ const MultiStepFormModal = ({
 
   const onSubmit = async (data: FullForm) => {
     try {
-      console.log("Submitted:", data);
+      const encodedSalary = encodeSalaryRange(data.minSalary, data.maxSalary);
 
       await createJobPost({
         data: {
@@ -163,10 +181,11 @@ const MultiStepFormModal = ({
           workStartDate: data.workStartDate,
           startDate: data.workStartDate,
           expiresAt: data.expiresAt,
-          questions: data.questions, // This will now have the proper values
+          questions: data.questions,
           endDate: data.expiresAt,
           country: "",
-          salary: parseInt(data.salary.toString(), 10),
+          minSalary: parseInt(data.minSalary.toString(), 10),
+          maxSalary: parseInt(data.maxSalary.toString(), 10),
           status: IJobPostStatusEnum.Draft,
         },
       });
@@ -206,20 +225,50 @@ const MultiStepFormModal = ({
                 />
                 <TextField
                   fullWidth
-                  label="Department"
+                  label="Client Name"
                   {...register("department")}
                   error={!!errors.department}
                   helperText={errors.department?.message}
                   margin="normal"
                 />
-                <TextField
-                  fullWidth
-                  label="Salary"
-                  {...register("salary")}
-                  error={!!errors.salary}
-                  helperText={errors.salary?.message}
-                  margin="normal"
-                />
+
+                <Box marginY={2}>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Salary Range
+                  </Typography>
+                  <Box display="flex" gap={2} alignItems="center">
+                    <TextField
+                      fullWidth
+                      label="From"
+                      type="number"
+                      {...register("minSalary")}
+                      error={!!errors.minSalary}
+                      helperText={errors.minSalary?.message}
+                      margin="normal"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">$</InputAdornment>
+                        ),
+                      }}
+                    />
+                    <Typography variant="body1">to</Typography>
+                    <TextField
+                      fullWidth
+                      label="To"
+                      type="number"
+                      {...register("maxSalary")}
+                      error={!!errors.maxSalary}
+                      helperText={errors.maxSalary?.message}
+                      margin="normal"
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">$</InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Box>
+                </Box>
+
                 <Box marginY={2}>
                   <Typography variant="subtitle1" gutterBottom>
                     Description
@@ -334,6 +383,7 @@ const MultiStepFormModal = ({
               </>
             )}
 
+            {/* Rest of the form steps remain the same */}
             {step === 1 && (
               <>
                 <TextField

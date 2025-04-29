@@ -131,47 +131,6 @@ export default function Filters({ cities, onApplyFilters }: FiltersProps) {
         </div>
       </div>
 
-      {/* SALARY */}
-      <div>
-        <h3 className="uppercase font-semibold text-xs textcolor mb-2">
-          Salary
-        </h3>
-        <div className="flex gap-2">
-          <TextField
-            label="Min"
-            type="number"
-            size="small"
-            fullWidth
-            value={salaryRange[0] ?? ""}
-            onChange={(e) =>
-              setSalaryRange([
-                e.target.value === "" ? null : Number(e.target.value),
-                salaryRange[1],
-              ])
-            }
-            InputProps={{
-              startAdornment: "$",
-            }}
-          />
-          <TextField
-            label="Max"
-            type="number"
-            size="small"
-            fullWidth
-            value={salaryRange[1] ?? ""}
-            onChange={(e) =>
-              setSalaryRange([
-                salaryRange[0],
-                e.target.value === "" ? null : Number(e.target.value),
-              ])
-            }
-            InputProps={{
-              startAdornment: "$",
-            }}
-          />
-        </div>
-      </div>
-
       {/* AVAILABILITY */}
       <div>
         <h3 className="uppercase font-semibold text-xs textcolor mb-2">

@@ -18,7 +18,8 @@ query JobsPosts {
     id
     payType
     startDate
-    salary
+    minSalary
+    maxSalary
     status
     title
     totalApplications

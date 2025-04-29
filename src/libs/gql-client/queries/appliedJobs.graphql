@@ -15,7 +15,8 @@ query AppliedJobs {
       title
       status
       startDate
-      salary
+      minSalary
+      maxSalary
       payType
       id
       firstPublishedAt

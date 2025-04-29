@@ -266,7 +266,8 @@ to {
       title
       status
       startDate
-      salary
+      minSalary
+      maxSalary
       payType
       id
       firstPublishedAt
@@ -326,7 +327,8 @@ to {
     id
     payType
     startDate
-    salary
+    minSalary
+    maxSalary
     status
     title
     totalApplications
@@ -356,7 +358,8 @@ to {
     id
     payType
     startDate
-    salary
+    minSalary
+    maxSalary
     status
     title
     totalApplications
@@ -390,7 +393,8 @@ to {
         id
         payType
         startDate
-        salary
+        minSalary
+        maxSalary
         status
         title
         totalApplications

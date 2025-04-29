@@ -140,7 +140,7 @@ export default function JobTable({
               <th className="px-4 py-3 font-medium text-[#7e5ca0]">Salary</th>
               <th className="px-4 py-3 font-medium text-[#7e5ca0]">Position</th>
               <th className="px-4 py-3 font-medium text-[#7e5ca0]">
-                Department
+                Client
               </th>
               <th className="px-4 py-3 font-medium text-[#7e5ca0]">
                 Availability
@@ -165,7 +165,7 @@ export default function JobTable({
           <tbody className="divide-y divide-gray-300">
             {paginatedJobs.map((job, index) => (
               <tr key={index} className="hover:bg-white/40 transition">
-                <td className="px-4 py-3">${applied ? job.jobPost.salary : job.salary}</td>
+                <td className="px-4 py-3 whitespace-nowrap ">${applied ? `${job.jobPost.minSalary} - $${job.jobPost.maxSalary}` : `${job.minSalary} - $${job.maxSalary}`}</td>
                 <td className="px-4 py-3">{applied ? job.jobPost.title : job.title}</td>
                 <td className="px-4 py-3">{applied ? job.jobPost.department: job.department}</td>
                 <td className="px-4 py-3">
