@@ -1,0 +1,6 @@
+mutation InitiateUpload($filename: String!, $contentType: String!) {
+  initiateUpload(filename: $filename, contentType: $contentType) {
+    uploadId
+    key
+  }
+}

@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { PlayCircleOutline } from "@mui/icons-material";
 import { useEffect, useState } from "react";
+import { fromGlobalId } from "@/libs/gql-client";
 
 // Easing function for smooth animation
 const easeInOutQuad = (t: number) => {
@@ -34,10 +35,18 @@ interface SummaryModalProps {
   jobTitle?: string;
   userName?: string;
   interviewDate?: string;
+  interviewId?: string;
 }
 
-const SummaryModal = ({ open, onClose, summary, jobTitle, userName, interviewDate }: SummaryModalProps) => {
-
+const SummaryModal = ({
+  open,
+  onClose,
+  summary,
+  jobTitle,
+  userName,
+  interviewDate,
+  interviewId,
+}: SummaryModalProps) => {
   const [animatedValues, setAnimatedValues] = useState({
     curiosity: 0,
     experience: 0,
@@ -77,8 +86,12 @@ const SummaryModal = ({ open, onClose, summary, jobTitle, userName, interviewDat
         experience: Math.floor(easedProgress * summary.experience * 10),
         culture_fit: Math.floor(easedProgress * summary.culture_fit * 10),
         communication: Math.floor(easedProgress * summary.communication * 10),
-        problem_solving: Math.floor(easedProgress * summary.problem_solving * 10),
-        technical_ability: Math.floor(easedProgress * summary.technical_ability * 10),
+        problem_solving: Math.floor(
+          easedProgress * summary.problem_solving * 10
+        ),
+        technical_ability: Math.floor(
+          easedProgress * summary.technical_ability * 10
+        ),
         overall_score: Math.floor(easedProgress * summary.overall_score * 10),
       });
 
@@ -92,20 +105,20 @@ const SummaryModal = ({ open, onClose, summary, jobTitle, userName, interviewDat
   }, [open, summary]);
 
   const getProgressColor = (score: number) => {
-    if (score <= 3) return '#ff3d47'; // red
-    if (score <= 7) return '#ff9100'; // orange
-    return '#4caf50'; // green
+    if (score <= 3) return "#ff3d47"; // red
+    if (score <= 7) return "#ff9100"; // orange
+    return "#4caf50"; // green
   };
 
   const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
+    if (!dateString) return "";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -125,83 +138,129 @@ const SummaryModal = ({ open, onClose, summary, jobTitle, userName, interviewDat
         }}
       >
         {/* Username at the top */}
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 2, textAlign: 'center' }}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{ fontWeight: "bold", mb: 2, textAlign: "center" }}
+        >
           {userName}
         </Typography>
 
-        <Box sx={{ 
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 3,
-        }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 3,
+          }}
+        >
           {/* Left Section: Video Placeholder (65%) */}
-          <Box sx={{ 
-            width: "68%",
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            bgcolor: '#f5f5f5',
-            borderRadius: 1,
-            position: 'relative',
-            minHeight: 400,
-          }}>
-            <IconButton sx={{ fontSize: 60, color: '#555' }}>
-              <PlayCircleOutline fontSize="inherit" />
-            </IconButton>
-            <Typography variant="caption" sx={{ 
-              position: 'absolute', 
-              bottom: 8, 
-              left: 8, 
-              color: '#777' 
-            }}>
-              Interview Recording
-            </Typography>
+          <Box
+            sx={{
+              width: "68%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              bgcolor: "#f5f5f5",
+              borderRadius: 1,
+              position: "relative",
+              minHeight: 400,
+              overflow: "hidden",
+            }}
+          >
+            {interviewId ? (
+              <video
+                controls
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              >
+                <source
+                  src={`https://naxiora-interviews.s3.amazonaws.com/${fromGlobalId(interviewId)}.webm`}
+                  type="video/webm"
+                />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <>
+                <IconButton sx={{ fontSize: 60, color: "#555" }}>
+                  <PlayCircleOutline fontSize="inherit" />
+                </IconButton>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    position: "absolute",
+                    bottom: 8,
+                    left: 8,
+                    color: "#777",
+                  }}
+                >
+                  Interview Recording
+                </Typography>
+              </>
+            )}
           </Box>
 
           {/* Right Section: Summary & Scores (35%) */}
-          <Box sx={{ width: "32%", overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <Box
+            sx={{
+              width: "32%",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <Box sx={{ mb: 2 }}>
-              <Typography variant="body2" color="text.secondary">Position: {jobTitle}</Typography>
-              <Typography variant="body2" color="text.secondary">Interview Date: {formatDate(interviewDate)}</Typography>
+              <Typography variant="body2" color="text.secondary">
+                Position: {jobTitle}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Interview Date: {formatDate(interviewDate)}
+              </Typography>
             </Box>
 
             <Divider sx={{ my: 1 }} />
 
-            <Typography variant="body1" gutterBottom sx={{ mb: 2, maxHeight: 120, overflow: 'auto' }}>
+            <Typography
+              variant="body1"
+              gutterBottom
+              sx={{ mb: 2, maxHeight: 120, overflow: "auto" }}
+            >
               {summary.summary}
             </Typography>
 
             {/* Overall Score - Centered at the top */}
-            <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 3 }}>
               <Stack direction="column" alignItems="center" spacing={1}>
                 <Typography variant="body2">Overall Score</Typography>
                 <Box position="relative" display="inline-flex">
-                  <CircularProgress 
-                    variant="determinate" 
+                  <CircularProgress
+                    variant="determinate"
                     value={100}
                     size={50}
                     thickness={5}
                     sx={{
-                      position: 'absolute',
-                      color: '#e0e0e0',
-                      '& .MuiCircularProgress-circle': {
-                        strokeLinecap: 'round',
-                      }
+                      position: "absolute",
+                      color: "#e0e0e0",
+                      "& .MuiCircularProgress-circle": {
+                        strokeLinecap: "round",
+                      },
                     }}
                   />
-                  <CircularProgress 
-                    variant="determinate" 
+                  <CircularProgress
+                    variant="determinate"
                     value={animatedValues.overall_score}
                     size={50}
                     thickness={5}
-                    sx={{ 
+                    sx={{
                       color: getProgressColor(summary.overall_score),
-                      '& .MuiCircularProgress-circle': {
-                        strokeLinecap: 'round',
+                      "& .MuiCircularProgress-circle": {
+                        strokeLinecap: "round",
                       },
                       zIndex: 1,
-                      transition: 'none',
-                    }} 
+                      transition: "none",
+                    }}
                   />
                   <Box
                     sx={{
@@ -209,13 +268,17 @@ const SummaryModal = ({ open, onClose, summary, jobTitle, userName, interviewDat
                       left: 0,
                       bottom: 0,
                       right: 0,
-                      position: 'absolute',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
+                      position: "absolute",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    <Typography variant="h6" component="div" color="text.secondary">
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      color="text.secondary"
+                    >
                       {Math.floor(animatedValues.overall_score / 10)}
                     </Typography>
                   </Box>
@@ -224,49 +287,80 @@ const SummaryModal = ({ open, onClose, summary, jobTitle, userName, interviewDat
             </Box>
 
             {/* Other 6 criteria in 2 columns */}
-            <Box sx={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gap: 2,
-              overflow: 'auto',
-              pr: 1,
-            }}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+                gap: 2,
+                overflow: "auto",
+                pr: 1,
+              }}
+            >
               {[
-                { label: 'Curiosity', value: summary.curiosity, animatedValue: animatedValues.curiosity },
-                { label: 'Experience', value: summary.experience, animatedValue: animatedValues.experience },
-                { label: 'Culture Fit', value: summary.culture_fit, animatedValue: animatedValues.culture_fit },
-                { label: 'Communication', value: summary.communication, animatedValue: animatedValues.communication },
-                { label: 'Problem Solving', value: summary.problem_solving, animatedValue: animatedValues.problem_solving },
-                { label: 'Technical Ability', value: summary.technical_ability, animatedValue: animatedValues.technical_ability },
+                {
+                  label: "Curiosity",
+                  value: summary.curiosity,
+                  animatedValue: animatedValues.curiosity,
+                },
+                {
+                  label: "Experience",
+                  value: summary.experience,
+                  animatedValue: animatedValues.experience,
+                },
+                {
+                  label: "Culture Fit",
+                  value: summary.culture_fit,
+                  animatedValue: animatedValues.culture_fit,
+                },
+                {
+                  label: "Communication",
+                  value: summary.communication,
+                  animatedValue: animatedValues.communication,
+                },
+                {
+                  label: "Problem Solving",
+                  value: summary.problem_solving,
+                  animatedValue: animatedValues.problem_solving,
+                },
+                {
+                  label: "Technical Ability",
+                  value: summary.technical_ability,
+                  animatedValue: animatedValues.technical_ability,
+                },
               ].map((item) => (
-                <Stack key={item.label} direction="row" alignItems="center" spacing={2}>
+                <Stack
+                  key={item.label}
+                  direction="row"
+                  alignItems="center"
+                  spacing={2}
+                >
                   <Box position="relative" display="inline-flex">
-                    <CircularProgress 
-                      variant="determinate" 
+                    <CircularProgress
+                      variant="determinate"
                       value={100}
                       size={40}
                       thickness={5}
                       sx={{
-                        position: 'absolute',
-                        color: '#e0e0e0',
-                        '& .MuiCircularProgress-circle': {
-                          strokeLinecap: 'round',
-                        }
+                        position: "absolute",
+                        color: "#e0e0e0",
+                        "& .MuiCircularProgress-circle": {
+                          strokeLinecap: "round",
+                        },
                       }}
                     />
-                    <CircularProgress 
-                      variant="determinate" 
+                    <CircularProgress
+                      variant="determinate"
                       value={item.animatedValue}
                       size={40}
                       thickness={5}
-                      sx={{ 
+                      sx={{
                         color: getProgressColor(item.value),
-                        '& .MuiCircularProgress-circle': {
-                          strokeLinecap: 'round',
+                        "& .MuiCircularProgress-circle": {
+                          strokeLinecap: "round",
                         },
                         zIndex: 1,
-                        transition: 'none',
-                      }} 
+                        transition: "none",
+                      }}
                     />
                     <Box
                       sx={{
@@ -274,13 +368,17 @@ const SummaryModal = ({ open, onClose, summary, jobTitle, userName, interviewDat
                         left: 0,
                         bottom: 0,
                         right: 0,
-                        position: 'absolute',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        position: "absolute",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      <Typography variant="caption" component="div" color="text.secondary">
+                      <Typography
+                        variant="caption"
+                        component="div"
+                        color="text.secondary"
+                      >
                         {Math.floor(item.animatedValue / 10)}
                       </Typography>
                     </Box>
@@ -290,9 +388,12 @@ const SummaryModal = ({ open, onClose, summary, jobTitle, userName, interviewDat
               ))}
             </Box>
 
-            <Box sx={{ mt: 3, textAlign: 'center' }}>
-              <Typography variant="h6" color={getProgressColor(summary.overall_score)}>
-                {summary.overall_score <= 3 ? 'Not Recommended' : 'Recommended'}
+            <Box sx={{ mt: 3, textAlign: "center" }}>
+              <Typography
+                variant="h6"
+                color={getProgressColor(summary.overall_score)}
+              >
+                {summary.overall_score <= 3 ? "Not Recommended" : "Recommended"}
               </Typography>
             </Box>
           </Box>

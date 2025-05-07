@@ -1,0 +1,3 @@
+mutation CompleteUpload($uploadId: String!, $key: String!, $parts: [PartETagInput!]!) {
+  completeUpload(uploadId: $uploadId, key: $key, parts: $parts)
+}

@@ -9,9 +9,9 @@
   "/(main)/auth/signin/page": "/auth/signin",
   "/(main)/calendar/page": "/calendar",
   "/(main)/dashboard-jobseeker/page": "/dashboard-jobseeker",
-  "/(main)/page": "/",
   "/(main)/jobs/page": "/jobs",
-  "/(main)/talk/page": "/talk",
+  "/(main)/page": "/",
   "/(main)/reports/page": "/reports",
+  "/(main)/talk/page": "/talk",
   "/(main)/underconstruction/page": "/underconstruction"
 }

@@ -79,6 +79,7 @@ const InterviewSummaryPage = () => {
           jobTitle={selected.jobPost.title}
           userName={`${selected.user.firstName} ${selected.user.lastName}`}
           interviewDate={selected.interview.scheduledAt}
+          interviewId={selected.interview.id}
         />
       )}
     </Box>

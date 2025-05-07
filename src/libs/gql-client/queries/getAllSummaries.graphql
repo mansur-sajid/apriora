@@ -12,6 +12,7 @@ query getAllSummaries {
       firstName
     }
     interview {
+      id
       scheduledAt
     }
   }

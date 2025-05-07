@@ -1,0 +1,3 @@
+mutation AbortUpload($uploadId: String!, $key: String!) {
+  abortUpload(uploadId: $uploadId, key: $key)
+}

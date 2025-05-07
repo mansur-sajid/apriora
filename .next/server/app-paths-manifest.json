@@ -9,9 +9,9 @@
   "/(main)/auth/signin/page": "app/(main)/auth/signin/page.js",
   "/(main)/calendar/page": "app/(main)/calendar/page.js",
   "/(main)/dashboard-jobseeker/page": "app/(main)/dashboard-jobseeker/page.js",
-  "/(main)/page": "app/(main)/page.js",
   "/(main)/jobs/page": "app/(main)/jobs/page.js",
-  "/(main)/talk/page": "app/(main)/talk/page.js",
+  "/(main)/page": "app/(main)/page.js",
   "/(main)/reports/page": "app/(main)/reports/page.js",
+  "/(main)/talk/page": "app/(main)/talk/page.js",
   "/(main)/underconstruction/page": "app/(main)/underconstruction/page.js"
 }

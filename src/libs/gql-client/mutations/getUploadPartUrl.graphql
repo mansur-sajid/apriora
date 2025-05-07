@@ -1,0 +1,3 @@
+mutation GetUploadPartUrl($uploadId: String!, $partNumber: Int!, $key: String!) {
+  getUploadPartUrl(uploadId: $uploadId, partNumber: $partNumber, key: $key)
+}

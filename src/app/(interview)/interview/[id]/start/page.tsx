@@ -11,7 +11,7 @@ import { ChatTranscript } from "../../../../(main)/talk/components/Transcript";
 import { Box } from "@mui/material";
 import { IconButton } from "@mui/material";
 import SpaceBarIcon from '@mui/icons-material/SpaceBar';
-import { useInterviewQuery, toGlobalId } from "@apriora/titan/gql-client";
+import { useInterviewQuery, toGlobalId, useInitiateUploadMutation, useGetUploadPartUrlMutation, useCompleteUploadMutation } from "@apriora/titan/gql-client";
 
 export default function InterviewPage() {
   const { id } = useParams();
@@ -39,12 +39,24 @@ export default function InterviewPage() {
 
   const client = new AssemblyAI({ apiKey: "43b24f3a62744557bfdc6813f3211783" });
 
+  const [isVideoRecording, setIsVideoRecording] = useState(false);
+  const videoMediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const videoChunksRef = useRef<Blob[]>([]);
+  const uploadIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { mutateAsync: initiateUpload } = useInitiateUploadMutation();
+  const { mutateAsync: getUploadPartUrl } = useGetUploadPartUrlMutation();
+  const { mutateAsync: completeUpload } = useCompleteUploadMutation();
+  const uploadIdRef = useRef<string | null>(null);
+  const uploadKeyRef = useRef<string | null>(null);
+  const uploadPartsRef = useRef<{ partNumber: number; etag: string }[]>([]);
+  const uploadInProgressRef = useRef<boolean>(false);
+
   // Load models and start face detection
   useEffect(() => {
     const loadModels = async () => {
       try {
-         faceapi.nets.tinyFaceDetector.loadFromUri('/models');
-         faceapi.nets.faceLandmark68Net.loadFromUri('/models');
+        faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+        faceapi.nets.faceLandmark68Net.loadFromUri('/models');
         startVideo();
       } catch (error) {
         console.error("Error loading face detection models:", error);
@@ -54,7 +66,8 @@ export default function InterviewPage() {
     const startVideo = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: { width: 640, height: 480 } 
+          video: { width: 640, height: 480 },
+          audio: true 
         });
         streamRef.current = stream;
         if (videoRef.current) {
@@ -63,6 +76,24 @@ export default function InterviewPage() {
             videoRef.current?.play();
           };
         }
+
+        // Initialize video recording
+        const mediaRecorder = new MediaRecorder(stream, {
+          mimeType: 'video/webm;codecs=vp9,opus'
+        });
+        videoMediaRecorderRef.current = mediaRecorder;
+        videoChunksRef.current = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            console.log('Received video chunk:', event.data.size);
+            videoChunksRef.current.push(event.data);
+          }
+        };
+
+        // Request data every second
+        mediaRecorder.start(1000);
+        setIsVideoRecording(true);
 
         detectFaces();
       } catch (error) {
@@ -217,12 +248,19 @@ export default function InterviewPage() {
     }
   };
 
-  const cleanup = () => {
+  const cleanup = async () => {
     if (audioElementRef.current) {
       audioElementRef.current.pause();
       audioElementRef.current.onended = null;
     }
     stopRecording();
+    if (videoMediaRecorderRef.current && isVideoRecording) {
+      if (videoMediaRecorderRef.current.state === 'recording') {
+        await waitForNextChunk(videoMediaRecorderRef.current, videoChunksRef);
+      }
+      videoMediaRecorderRef.current.stop();
+      setIsVideoRecording(false);
+    }
     if (silenceTimerRef.current) {
       clearTimeout(silenceTimerRef.current);
     }
@@ -234,6 +272,25 @@ export default function InterviewPage() {
     warningGiven.current = false;
     setIsAway(false);
     toast.dismiss();
+    
+    // Upload the full video and get the URL
+    if (videoChunksRef.current.length > 0 && !uploadInProgressRef.current) {
+      uploadInProgressRef.current = true;
+      try {
+        const url = await uploadVideoToAWS(videoChunksRef.current);
+        console.log('Uploaded video URL:', url);
+      } catch (error) {
+        console.error('Error uploading video:', error);
+      } finally {
+        uploadInProgressRef.current = false;
+        navigator.mediaDevices.getUserMedia({ audio: true, video: true }).then(stream => {
+          stream.getTracks().forEach(t => t.stop());
+        }).catch(err => {
+          console.warn('Failed to force-stop media devices:', err);
+        });
+      }
+    }
+    videoChunksRef.current = [];
   };
 
   const playNextAudio = () => {
@@ -331,6 +388,104 @@ export default function InterviewPage() {
     if (isRecording) {
       stopRecording();
     }
+  };
+
+  const uploadVideoToAWS = async (videoChunks: Blob[]) => {
+    try {
+      console.log('Starting video upload...', { chunksCount: videoChunks.length });
+      // Combine video chunks into a single blob
+      const videoBlob = new Blob(videoChunks, { type: 'video/webm;codecs=vp9,opus' });
+      console.log('Video blob size:', videoBlob.size);
+      if (videoBlob.size === 0) {
+        console.warn('Empty video blob, skipping upload');
+        return null;
+      }
+      // Initiate upload
+      const { initiateUpload: { uploadId, key } } = await initiateUpload({
+        filename: `${id}.webm`,
+        contentType: 'video/webm'
+      });
+      console.log('Upload initiated:', { uploadId, key });
+      uploadIdRef.current = uploadId;
+      uploadKeyRef.current = key;
+      uploadPartsRef.current = [];
+      // Split video into 5MB chunks for multipart upload
+      const chunkSize = 5 * 1024 * 1024; // 5MB
+      const totalParts = Math.ceil(videoBlob.size / chunkSize);
+      console.log('Uploading in chunks:', { totalChunks: totalParts });
+      
+      // Create an array to store upload promises
+      const uploadPromises = [];
+      
+      for (let i = 0; i < totalParts; i++) {
+        const start = i * chunkSize;
+        const end = Math.min(start + chunkSize, videoBlob.size);
+        const chunk = videoBlob.slice(start, end);
+        const partNumber = i + 1;
+        console.log(`Uploading chunk ${partNumber}/${totalParts}`);
+        
+        // Get presigned URL for this part
+        const { getUploadPartUrl: presignedUrl } = await getUploadPartUrl({
+          uploadId,
+          partNumber,
+          key
+        });
+        
+        // Create a promise for this part's upload
+        const uploadPromise = fetch(presignedUrl, {
+          method: 'PUT',
+          body: chunk
+        }).then(async (response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to upload part ${partNumber}`);
+          }
+          const etag = response.headers.get('ETag');
+          if (!etag) {
+            throw new Error(`No ETag received for part ${partNumber}`);
+          }
+          return { partNumber, etag };
+        });
+        
+        uploadPromises.push(uploadPromise);
+      }
+      
+      // Wait for all uploads to complete
+      const completedParts = await Promise.all(uploadPromises);
+      
+      // Sort parts by part number
+      completedParts.sort((a, b) => a.partNumber - b.partNumber);
+      
+      // Complete the multipart upload
+      await completeUpload({
+        uploadId,
+        key,
+        parts: completedParts
+      });
+      
+      console.log('Video upload completed successfully');
+      // Return the S3 URL
+      const s3Url = `https://naxiora-interviews.s3.amazonaws.com/${key}`;
+      return s3Url;
+    } catch (error) {
+      console.error('Error uploading video:', error);
+      toast.error('Failed to upload interview recording');
+      throw error;
+    }
+  };
+
+  // Helper to wait for the next chunk after requestData
+  const waitForNextChunk = (mediaRecorder: MediaRecorder, videoChunksRef: React.MutableRefObject<Blob[]>) => {
+    return new Promise<void>((resolve) => {
+      const handler = (event: BlobEvent) => {
+        if (event.data.size > 0) {
+          videoChunksRef.current.push(event.data);
+        }
+        mediaRecorder.removeEventListener('dataavailable', handler);
+        resolve();
+      };
+      mediaRecorder.addEventListener('dataavailable', handler);
+      mediaRecorder.requestData();
+    });
   };
 
   return (
